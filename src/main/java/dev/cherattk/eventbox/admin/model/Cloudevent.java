@@ -6,16 +6,27 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.web.bind.annotation.PostMapping;
+
 @Entity
 public class Cloudevent{
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	protected Integer id;
 	
 	@Column( name= "thingid")
-	protected int thing_id;
+	protected Integer thing_id;
 	
+	@Column( name= "name")
+	protected String name;
+	
+	@Column( name= "description")
+	protected String description;
+	
+	/////////////////////////////////////////
+	// CloudEvent Attributes
+	////////////////////////////////////////
 	@Column( name= "ce_specversion")
 	protected String specversion;
 	
@@ -31,18 +42,47 @@ public class Cloudevent{
 	@Column( name= "ce_dataschema")
 	protected String dataschema;
 	
-	protected Cloudevent() {}
+	public Cloudevent() {}
 	
-	public String getId() {
+	/** 
+	 * Like Model.Listener class this constructor is 
+	 * used in APIcontroller.bindListener()
+	 * @param id
+	 */
+	public Cloudevent(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setThingId(int thing_id) {
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
+	public void setThingId(Integer thing_id) {
 		 this.thing_id = thing_id;
 	}
 	
-	public int getThingId() {
+	public Integer getThingId() {
 		return thing_id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	public String getSpecversion() {

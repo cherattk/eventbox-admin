@@ -10,35 +10,63 @@ import javax.persistence.Id;
 public class Listener {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	protected Integer id;
 
 	@Column( name= "thingid")
-	protected int thing_id;
-
-	@Column( name= "endpoint")
-	protected String endpoint;
+	protected Integer thing_id;
 	
-	protected Listener() {}
+	@Column( name= "name")
+	protected String name;
 
-	public int getId() {
+	@Column( name= "url")
+	protected String url;
+	
+	public Listener() {}
+
+	/**
+	 * Like Model.Cloudevent class this constructor is used in APIcontroller.bindListener()
+	 * @param id
+	 */
+	
+	public Listener(Integer id) {
+		super();
+		this.id = id;
+	}
+
+
+
+	public Integer getId() {
 		return id;
 	}
 
-	public int getThingId() {
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public Integer getThingId() {
 		return thing_id;
 	}
 
-	public void setThingId(int thing_id) {
+	public void setThingId(Integer thing_id) {
 		this.thing_id = thing_id;
 	}
 
-	public String getEndpoint() {
-		return endpoint;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 	

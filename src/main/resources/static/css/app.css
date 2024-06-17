@@ -1,0 +1,85 @@
+
+textarea{
+  min-height:200px;
+}
+
+/***************************/
+.check-btn label{
+  background-color:#f0f4f7;
+  color:#0d6efd;
+}
+.check-btn label:hover{
+  background-color:#0d6efd;
+  color:#fff;
+  cursor:pointer;
+}
+.check-btn input:checked + label{
+  background-color:#0d6efd;
+  border-color:#0d6efd;
+  color:#fff;
+}
+
+
+/*************************************************************
+checklist
+**************************************************************/
+.sidebar{
+  width:250px;
+}
+.sidebar a:hover{
+  background-color: #e2eef9;
+}
+/*************************************************************
+checklist
+**************************************************************/
+.checklist .form-check{
+  padding-left:0;
+  position:relative;
+}
+.checklist .form-check-input{
+  display:none;
+}
+.checklist .form-check-label{
+  background-color:#f2f5f6;
+  display:block;
+  padding:10px 45px 10px 15px;
+  margin-bottom:3px;
+}
+.checklist .checkmark {
+  position: absolute;
+  top:10px;
+  left: 10px;
+  height: 25px;
+  width: 25px;
+}
+.checklist .checkmark:after{
+  content: "";
+  position: absolute;
+  display:none;
+  left:9px;
+  top:2px;
+  width:9px;
+  height:15px;
+  border-style: solid;
+  border-width: 0px 3px 3px 0px;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(40deg);
+}
+.checklist .form-check-label:hover{
+  background-color:#e2eef9;
+  cursor:pointer;
+}
+.checklist .form-check-input:checked + .form-check-label{
+  background-color: #0d6efd;
+  color:#fff;
+  padding-left: 50px;
+}
+.checklist .form-check-input:checked + .form-check-label .checkmark{
+  background-color:transparent;
+  border-color:#fff;
+}
+.checklist .form-check-input:checked + .form-check-label .checkmark:after{
+  border-color:#fff;
+  display:block;
+}
