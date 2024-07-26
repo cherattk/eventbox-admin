@@ -4,279 +4,213 @@ import ThingStore from '../../datastore/thingstore';
 import EventBindingStore from '../../datastore/eventbindingstore';
 import { EmptyState } from '../component/message';
 import Config from '../../config';
+import { SummaryEvent } from './component';
+import Schema from '../../datastore/schema';
 
 export default class FormEventBinding extends React.Component {
 
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    this.state = this.setInitialState();
-    this.__listenerIdentifier = [];
+		this.state = this.setInitialState();
+		this.listenerIdentifier = [];
 
-    // this.selectListenerEndpoint = this.selectListenerEndpoint.bind(this);
-  }
+		// this.selectListenerEndpoint = this.selectListenerEndpoint.bind(this);
+	}
 
-  setInitialState() {
-    return {
-      actionForm: null,
-      bindingId: "",
-      event: [],
-      listener: [],
-      activeEvent: null,
-      activeEndpoint: []
-    }
-  }
+	setInitialState() {
+		return {
+			event: Schema.eventSchema(),
+			freeListener: [],
+			activeEndpoint: []
+		}
+	}
 
-  componentDidMount() {
-    var self = this;
-    $(this.modal).on('hide.bs.modal', function () {
-      self.setState(function () {
-        return self.setInitialState();
-      });
-    });
-    //===============================================
-    this.__listenerIdentifier.push(UIEvent.addListener('show-eventbinding-form', function (uiEvent) {
-      if (uiEvent.message.actionForm === "edit") {
-        var eventbinding = EventBindingStore.getEventBinding({ id: uiEvent.message.eventbinding_id });
-        var _event = ThingStore.getEvent({ id: eventbinding[0].event.id });
-        var _activeEndpoint = eventbinding[0].listener.map(function (_listener) {
-          return (_listener.id);
-        });
-        const listener = ThingStore.getListennerEndpoint().sort((a, b) => {
-          return (_activeEndpoint.indexOf(a.id) != -1) ? -1 : 1;
-        });
+	componentDidMount() {
+		var self = this;
+		$(this.modal).on('hide.bs.modal', function() {
+			self.setState(function() {
+				return self.setInitialState();
+			});
+		});
+		//===============================================
+		this.listenerIdentifier.push(UIEvent.addListener('show-eventbinding-form', function(uiEvent) {
+			var _event = ThingStore.getEvent({ id: uiEvent.message.event_id })[0];
+			/////////////////////////////////////////////////
+			// GET "FREE"" Listeners Endpoint
+			/////////////////////////////////////////////////
+			var bindedListener = self.getBindedListenerToEvent(_event.id);
+			var freeListener = self.getFreeListener(bindedListener);
+			//////////////////////////
+			// UPDATE COMPONENT STATE
+			//////////////////////////
+			self.setState(function() {
+				return {
+					event: _event,
+					freeListener: freeListener,
+					activeEndpoint: []
+				}
+			}, function() {
+				$(self.modal).modal('show');
+			});
 
-        self.setState(function () {
-          return {
-            actionForm: uiEvent.message.actionForm,
-            bindingId: eventbinding[0].id,
-            event: _event,
-            listener: listener,
-            activeEndpoint: _activeEndpoint,
-            activeEvent: _event[0].id
-          }
-        }, function () {
-          $(self.modal).modal('show');
-        });
-      }
-      else if (uiEvent.message.actionForm === "add") {
-        ///////////////////////////////////////////////////////////
-        // Get the id of the events that are binded to listener
-        ///////////////////////////////////////////////////////////
-        var bindedEventID = EventBindingStore.getEventBinding().map(function (el) {
-          return (el.event.id);
-        });
-        ///////////////////////////////////////////////////////////
-        // Get "a free events" THAT ARE NOT binded to listener
-        //////////////////////////////////////////////////////////
-        var _event = ThingStore.getEvent().filter(function (el) {
-          return (bindedEventID.indexOf(el.id) == -1);
-        });
-        /////////////////////////////////////////////////
-        // Listener Endpoints
-        /////////////////////////////////////////////////
-        var _listener = ThingStore.getListennerEndpoint();
-        //////////////////////////
-        // UPDATE COMPONENT STATE
-        //////////////////////////
-        self.setState(function () {
-          return {
-            actionForm: uiEvent.message.actionForm,
-            event: _event,
-            listener: _listener,
-            activeEvent: "",
-            activeEndpoint: []
-          }
-        }, function () {
-          $(self.modal).modal('show');
-        });
-      }
-    })
-    );
-  }
+		})
+		);
+	}
 
-  componentWillUnmount() {
-    this.__listenerIdentifier.forEach(element_id => {
-      UIEvent.removeListener(element_id);
-    });
-    this.__listenerIdentifier = [];
-  }
+	componentWillUnmount() {
+		this.listenerIdentifier.forEach(element_id => {
+			UIEvent.removeListener(element_id);
+		});
+		this.listenerIdentifier = [];
+	}
 
-  close() {
-    let self = this;
-    this.setState(function () {
-      return self.setInitialState();
-    }, function () {
-      $(self.modal).modal('hide');
-    });
-  }
+	close() {
+		let self = this;
+		this.setState(function() {
+			return self.setInitialState();
+		}, function() {
+			$(self.modal).modal('hide');
+		});
+	}
 
-  saveListener(e) {
-    e.preventDefault();
-    var self = this;
-    console.log(this.state.activeEvent);
-    console.log(this.state.activeEndpoint);
-    var method = "";
-    var url = "";
-    if (this.state.actionForm == "edit") {
-      method = "put".toLocaleLowerCase();
-      url = Config.url.data.eventbinding(method, this.state.bindingId);
-    }
-    else if (this.state.actionForm == "add") {
-      method = "post".toLocaleLowerCase();
-      url = Config.url.data.eventbinding(method);
-    }
-    const data = {
-      event_id: this.state.activeEvent,
-      endpoints: this.state.activeEndpoint
-    }
-    ThingStore.saveData(url, method, data, function (ajaxResponse) {
-      EventBindingStore.loadEventBindingStore(function () {
-        DataEvent.dispatch('update-list-eventbinding', { id: ajaxResponse.id });
-        UIEvent.dispatch('alert-msg', { status: "success", text: "have been successfully saved" });
-        self.close();
-      });
-    });
-  }
+	saveListener(e) {
+		e.preventDefault();
+		var self = this;
+		var method = "post".toLocaleLowerCase();
+		var url = Config.url.data.eventbinding(method);
+		const data = {
+			eventId: this.state.event.id,
+			listeners: this.state.activeEndpoint
+		}
+		console.log(data);
 
-  selectListenerEndpoint(ev) {
-    // ev.preventDefault();
-    const input = ev.currentTarget;
-    if (input.checked) {
-      if (this.state.activeEndpoint.indexOf(input.value) == -1) {
-        this.state.activeEndpoint.push(input.value);
-      }
-    } else {
-      this.state.activeEndpoint = this.state.activeEndpoint.filter((listener_id) => {
-        return (listener_id != input.value);
-      });
-    }
-    this.setState({ activeEndpoint: this.state.activeEndpoint });
-  }
+		ThingStore.saveData(url, method, data, function(ajaxResponse) {
+			EventBindingStore.loadEventBindingStore(function() {
+				DataEvent.dispatch('update-element-eventbinding', { eventId : data.eventId });
+				UIEvent.dispatch('alert-msg', { status: "success", text: "have been successfully saved" });
+				self.close();
+			});
+		});
+	}
 
-  renderListenerEndpoint() {
-    // set list of endpoint
-    var htmlList = this.state.listener.map((listener, idx) => {
-      var thing = ThingStore.getThing({ id: listener.thing_id });
-      var key = listener.id;
-      var _checked = (this.state.activeEndpoint.indexOf(listener.id) != -1);
-      return (
-        <div key={key}
-          className='border-bottom mb-2 pb-3'>
-          <p className='fw-bold mb-2'> {thing[0].name} </p>
-          <div>
-            <div className="form-check">
-              <input className="form-check-input" name="listener_endpoint" type="checkbox"
-                id={listener.id}
-                value={listener.id}
-                checked={_checked}
-                onChange={this.selectListenerEndpoint.bind(this)} />
-              <label className="form-check-label rounded" htmlFor={listener.id}>
-                <span className="checkmark"></span>
-                {listener.url}
-              </label>
-            </div>
-          </div>
-        </div>
-      );
-    }, this);
+	getFreeListener(bindedListeners) {
+		var allListener = ThingStore.getListennerEndpoint();
 
-    return (
-      <div className="card">
-        <h5 className="card-header">Listeners Endpoints</h5>
-        <div className="card-body">
-          <div className="checklist">
-            <form>
-              {htmlList}
-            </form>
-          </div>
-        </div>
-      </div>
-    )
-  }
+		if (bindedListeners.length > 0) {
+			let freeListener = allListener.filter((_listener) => {
+				return bindedListeners.indexOf(_listener.id) === -1;
+			});
+			return freeListener;
+		}
+		else {
+			return allListener;
+		}
 
-  selectEvent(e) {
-    e.preventDefault();
-    this.setState({ activeEvent: e.currentTarget.dataset.eventId });
-  }
+	}
 
-  renderEvent() {
-    var htmlListItem = this.state.event.map(function (ev) {
-      var thing = ThingStore.getThing({ id: ev.thing_id });
-      var itemCSS = "list-group-item";
-      var clickHandler = e => { e.preventDefault(); };
-      if (this.state.actionForm == "add") {
-        itemCSS += " list-group-item-action";
-        clickHandler = this.selectEvent.bind(this);
-      }
-      itemCSS += (ev.id == this.state.activeEvent) ? " active" : "";
-      return (
-        <a key={ev.id} href="#" className={itemCSS}
-          data-event-id={ev.id}
-          onClick={clickHandler}>
-          <p className='m-0 mb-1'>
-            <span className='fw-bold'>Thing : </span>{thing[0].name}
-          </p>
-          <p className='m-0 mb-1'>
-            <span className='fw-bold'>Event Name : </span>
-            {ev.name}
-          </p>
-          <p className='m-0 mb-1'>
-            <span className='fw-bold'>Event Type : </span>
-            {ev.ce_type}
-          </p>
-        </a>
-      )
-    }, this);
+	getBindedListenerToEvent(eventId) {
+		var listEventBinding = EventBindingStore.getEventBinding();
+		var binded_listeners = [];
+		for (let i = 0; i < listEventBinding.length; i++) {
+			if (listEventBinding[i].event.id === eventId) {
+				binded_listeners = listEventBinding[i].listeners.map(el => el.id);
+				i = listEventBinding.length;
+			}
+		}
+		return binded_listeners;
+	}
 
-    return (
-      <div className="card mb-3">
-        <h5 className="card-header">Events</h5>
-        <div className="card-body border-bottom">
-          <div className="list-group">
-            {htmlListItem}
-          </div>
-        </div>
-      </div>
-    );
-  }
+	selectListenerEndpoint(ev) {
+		// ev.preventDefault();
+		const input = ev.currentTarget;
+		var listenerId = parseInt(input.value);
+		if (input.checked) {
+			if (this.state.activeEndpoint.indexOf(input.value) == -1) {
+				this.state.activeEndpoint.push(listenerId);
+			}
+		} else {
+			this.state.activeEndpoint = this.state.activeEndpoint.filter((listener_id) => {
+				return (listener_id != listenerId);
+			});
+		}
+		this.setState({ activeEndpoint: this.state.activeEndpoint });
+	}
 
-  render() {
+	renderListenerEndpoint() {
+		// set list of endpoint
+		var htmlList = this.state.freeListener.map((listener, idx) => {
+			var thingName = ThingStore.getThing({ id: listener.thingId })[0].name;
+			var key = listener.id;
+			var _checked = (this.state.activeEndpoint.indexOf(listener.id) != -1);
+			return (
+				<div key={key} className="list-group-item pt-2">
+					<div className="m-0 mb-3">
+						<label className='text-primary me-2' style={{ textAlign: "right", width: "80px" }}>Thing :</label>
+						{thingName}
+					</div>
+					<div className="align-items-center d-flex">
+						<label className='text-primary me-2' style={{ textAlign: "right", width: "80px" }}>Endpoint :</label>
+						<div className="form-check flex-grow-1">
+							<input className="form-check-input" name="listener_endpoint" type="checkbox"
+								id={listener.id}
+								value={listener.id}
+								checked={_checked}
+								onChange={this.selectListenerEndpoint.bind(this)} />
+							<label className="form-check-label" htmlFor={listener.id}>
+								<span className="checkmark"></span>
+								{listener.url}
+							</label>
+						</div>
+					</div>
+				</div>
+			);
+		}, this);
 
-    return (
-      <div className="modal fade app-modal-form" id="formListener"
-        tabIndex="-1" role="dialog"
-        aria-labelledby="formListenerLabel"
-        aria-hidden="true"
-        ref={node => (this.modal = node)}>
+		return (
+			<div className="pb-3">
+				<label className="bg-white border border-bottom-0 fw-bold p-2 px-3 text-primary" style={{ marginBottom: "-1px" }}>
+					Listeners
+				</label>
+				<div className="checklist bg-white list-group list-group-flush border pt-2 px-2">
+					{htmlList}
+				</div>
+			</div>
+		)
+	}
 
-        <div className="modal-dialog modal-xl" role="document">
-          <div className="modal-content">
-            <div className="modal-header px-4">
-              <h5 className="modal-title" id="formListenerLabel">
-                Event Binding
-              </h5>
-              <button type="button" className="btn-close" onClick={this.close.bind(this)} aria-label="Close">
-              </button>
-            </div>
-            <div className="modal-body px-4">
-              {
-                this.state.event.length == 0 ? <EmptyState text="All events are bonded to listener" /> :
-                  this.renderEvent()
-              }
-              {
-                this.state.event.length > 0 ?  this.renderListenerEndpoint() : null
-              }
-            </div>
-            <div className="modal-footer justify-content-between">
-              <button type="button" className="btn btn-success"
-                onClick={this.saveListener.bind(this)}>Save</button>
-              <button type="button" className="btn btn-secondary"
-                onClick={this.close.bind(this)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div >
-    )
-  }
+	render() {
+		return (
+			<div className="modal fade app-modal-form" id="formListener"
+				tabIndex="-1" role="dialog"
+				aria-labelledby="formListenerLabel"
+				aria-hidden="true"
+				ref={node => (this.modal = node)}>
+
+				<div className="modal-dialog modal-xl" role="document">
+					<div className="modal-content">
+						<div className="modal-header px-4">
+							<h5 className="modal-title" id="formListenerLabel">
+								Event Binding
+							</h5>
+							<button type="button" className="btn-close" onClick={this.close.bind(this)} aria-label="Close">
+							</button>
+						</div>
+						<div className="modal-body px-4">
+							<SummaryEvent event={this.state.event} />
+							{
+								this.state.freeListener.length > 0 ? this.renderListenerEndpoint() : null
+							}
+						</div>
+						<div className="modal-footer justify-content-between">
+							<button type="button" className="btn btn-success"
+								onClick={this.saveListener.bind(this)}>Save</button>
+							<button type="button" className="btn btn-secondary"
+								onClick={this.close.bind(this)}>Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div >
+		)
+	}
 }

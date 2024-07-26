@@ -1,130 +1,174 @@
 package dev.cherattk.eventbox.admin.model;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.MediaType;
 
 @Entity
+@Table(uniqueConstraints = { 
+		@UniqueConstraint(name="unique_Thing_Spec_Source_Type" , 
+				columnNames = { "thingId" , "ce_specversion", "ce_source" , "ce_type" }) 
+})
 public class Cloudevent{
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer id;
 	
-	@Column( name= "thingid")
-	protected Integer thing_id;
+	@Column( name= "thingId" , nullable = false)
+	protected Integer thingId;
 	
 	@Column( name= "name")
-	protected String name;
+	protected String name = "name";
 	
 	@Column( name= "description")
-	protected String description;
+	protected String description = "description";
+	
+	@Transient
+	private String key;
 	
 	/////////////////////////////////////////
 	// CloudEvent Attributes
 	////////////////////////////////////////
-	@Column( name= "ce_specversion")
+	@Column( name= "ce_specversion" , nullable = false)
 	protected String specversion;
 	
-	@Column( name= "ce_source")
+	@Column( name= "ce_source" , nullable = false)
 	protected String source;
 	
-	@Column( name= "ce_type")
+	@Column( name= "ce_type" , nullable = false)
 	protected String type;
 	
 	@Column( name= "ce_datacontenttype")
-	protected String datacontenttype;
+	protected String datacontenttype = MediaType.APPLICATION_JSON_VALUE;
 	
-	@Column( name= "ce_dataschema")
+	@Column( name= "ce_dataschema" , nullable = true)
 	protected String dataschema;
 	
-	public Cloudevent() {}
-	
-	/** 
-	 * Like Model.Listener class this constructor is 
-	 * used in APIcontroller.bindListener()
+	public Cloudevent() {
+		this.key = this.specversion + "," + this.source + "," + this.type;
+	}
+
+	/**
+	 * This constructor is required in EventBindingService.addEventBindingListener()
 	 * @param id
 	 */
 	public Cloudevent(Integer id) {
 		this.id = id;
 	}
-
+	
+	public String getKey() {
+		return this.key;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(Integer id) {
+	public Cloudevent setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	
-	public void setThingId(Integer thing_id) {
-		 this.thing_id = thing_id;
+	public Cloudevent setThingId(Integer thingId) {
+		 this.thingId = thingId;
+		 return this;
 	}
 	
 	public Integer getThingId() {
-		return thing_id;
+		return thingId;
 	}
 	
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Cloudevent setName(String name) {
 		this.name = name;
+		return this;
 	}
 	
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public Cloudevent setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	
 	public String getSpecversion() {
 		return specversion;
 	}
 
-	public void setSpecversion(String specversion) {
+	public Cloudevent setSpecversion(String specversion) {
 		this.specversion = specversion;
+		return this;
 	}
 
 	public String getSource() {
 		return source;
 	}
 
-	public void setSource(String source) {
+	public Cloudevent setSource(String source) {
 		this.source = source;
+		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public Cloudevent setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public String getDatacontenttype() {
 		return datacontenttype;
 	}
 
-	public void setDatacontenttype(String datacontenttype) {
+	public Cloudevent setDatacontenttype(String datacontenttype) {
 		this.datacontenttype = datacontenttype;
+		return this;
 	}
 
 	public String getDataschema() {
 		return dataschema;
 	}
 
-	public void setDataschema(String dataschema) {
+	public Cloudevent setDataschema(String dataschema) {
 		this.dataschema = dataschema;
+		return this;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(specversion, source , type);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cloudevent other = (Cloudevent) obj;
+		return Objects.equals(specversion, other.specversion) && Objects.equals(source, other.source)
+				&& Objects.equals(type, other.type);
 	}
 	
 	
-
+	
 }

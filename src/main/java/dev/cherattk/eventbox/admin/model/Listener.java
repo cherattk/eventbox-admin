@@ -1,20 +1,28 @@
 package dev.cherattk.eventbox.admin.model;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
+@Table(uniqueConstraints = { 
+		@UniqueConstraint(name="unique_Thing_Url" , 
+				columnNames = { "thingId" , "url"}) 
+})
 public class Listener {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer id;
 
-	@Column( name= "thingid")
-	protected Integer thing_id;
+	@Column( name= "thingId")
+	protected Integer thingId;
 	
 	@Column( name= "name")
 	protected String name;
@@ -23,18 +31,14 @@ public class Listener {
 	protected String url;
 	
 	public Listener() {}
-
+	
 	/**
-	 * Like Model.Cloudevent class this constructor is used in APIcontroller.bindListener()
+	 * This constructor is used in APIController.bindListener() method
 	 * @param id
 	 */
-	
 	public Listener(Integer id) {
-		super();
 		this.id = id;
 	}
-
-
 
 	public Integer getId() {
 		return id;
@@ -54,11 +58,11 @@ public class Listener {
 
 
 	public Integer getThingId() {
-		return thing_id;
+		return thingId;
 	}
 
-	public void setThingId(Integer thing_id) {
-		this.thing_id = thing_id;
+	public void setThingId(Integer thingId) {
+		this.thingId = thingId;
 	}
 
 	public String getUrl() {
@@ -68,6 +72,25 @@ public class Listener {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(thingId, url);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Listener other = (Listener) obj;
+		return Objects.equals(thingId, other.thingId) && Objects.equals(url, other.url);
+	}
+	
+	
 	
 	
 

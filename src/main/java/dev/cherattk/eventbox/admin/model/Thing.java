@@ -1,5 +1,7 @@
 package dev.cherattk.eventbox.admin.model;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,8 +22,9 @@ public class Thing {
 
 	protected String description = "Thing Description";
 	
-	protected enum ThingCategory {
-		WEB_SERVICE, DEVICE	    
+	public static enum ThingCategory {
+		WEB_SERVICE,
+		DEVICE;
     }
 	
 	//@Column(columnDefinition = "varchar(255) default 'Web Service'")
@@ -29,6 +32,10 @@ public class Thing {
 	protected ThingCategory category = ThingCategory.WEB_SERVICE;
 
 	public Thing() {}
+	
+	public Thing(Integer id) {
+		this.id = id;
+	}
 
 	public Integer getId() {
 		return id;
@@ -60,11 +67,31 @@ public class Thing {
 	
 	public ThingCategory getCategory() {
 		return category;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(category, id, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Thing other = (Thing) obj;
+		return category == other.category && Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}	
 	
-	@Override
-	public String toString() {
-		return String.format("Thing[id=%d, name='%s', description='%s' , category='%s']", this.id, this.name, this.description , this.category);
-	}
+	
+	
+	/*
+	 * @Override public String toString() { return
+	 * String.format("{id:%d, name:'%s', description:'%s' , category:'%s'}",
+	 * this.id, this.name, this.description , this.category);: }
+	 */
 
 }

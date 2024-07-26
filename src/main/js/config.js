@@ -38,10 +38,10 @@ const Config = {
       },
       listener_endpoint:  function (method, thing_id, endpoint_id) {
         if (method == 'get' || method == 'post') {
-          return `${hostAPI}/listener_endpoints`;
+          return `${hostAPI}/listeners`;
         }
         if (method == 'put' || method == 'delete') {
-          return `${hostAPI}/listener_endpoints/${endpoint_id}`;
+          return `${hostAPI}/listeners/${endpoint_id}`;
         }
       },
       eventbinding:  function (method, binding_id) {

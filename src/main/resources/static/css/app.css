@@ -42,8 +42,7 @@ checklist
 .checklist .form-check-label{
   background-color:#f2f5f6;
   display:block;
-  padding:10px 45px 10px 15px;
-  margin-bottom:3px;
+  padding:0.5rem 1rem;
 }
 .checklist .checkmark {
   position: absolute;

@@ -24,7 +24,7 @@ function App() {
 						<a className="mb-1 nav-link"
 							data-bs-toggle="tab" href="#nav-eventbinding" role="tab">
 							<i className="bi bi-diagram-3-fill me-3 fs-5"></i>
-							Event Binding
+							Binding
 						</a>
 					</li>
 					<li><a className="mb-1 nav-link"
@@ -43,18 +43,19 @@ function App() {
 				<div className="tab-content">
 					<div className="tab-pane fade show active" id="nav-thing"
 						role="tabpanel">
-						<h1 className="bg-light h2 m-0 p-3 text-primary border-bottom">Thing Manager</h1>
+						<h2 className="bg-light h3 m-0 p-3 text-primary border-bottom">Thing Manager</h2>
 						<ContainerThing />
 					</div>
 					<div className="tab-pane fade" id="nav-eventbinding"
 						role="tabpanel">
-						<h1 className="bg-light h2 m-0 p-3 text-primary border-bottom">EventBinding Manager</h1>
+						<h2 className="bg-light h3 m-0 p-3 text-primary border-bottom">Binding Manager</h2>
 						<ContainerEventBinding />
 					</div>
-					{/* <div className="tab-pane fade" id="nav-activity"
+					<div className="tab-pane fade" id="nav-activity"
             role="tabpanel">
-            <ContainerActivity />
-          </div> */}
+						<h2 className="bg-light h3 m-0 p-3 text-primary border-bottom">Activity View</h2>
+						{/*<ContainerActivity />*/}
+          </div> 
 				</div>
 			</div>
 		</>

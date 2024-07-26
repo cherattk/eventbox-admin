@@ -1,0 +1,71 @@
+package dev.cherattk.eventbox.admin.service;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+
+import org.springframework.stereotype.Service;
+
+import dev.cherattk.eventbox.admin.http.BindingListener;
+import dev.cherattk.eventbox.admin.model.Cloudevent;
+import dev.cherattk.eventbox.admin.model.CloudeventRepo;
+import dev.cherattk.eventbox.admin.model.EventBinding;
+import dev.cherattk.eventbox.admin.model.EventBindingMapping;
+import dev.cherattk.eventbox.admin.model.EventBindingRepo;
+import dev.cherattk.eventbox.admin.model.Listener;
+import dev.cherattk.eventbox.admin.model.ListenerRepo;
+import dev.cherattk.eventbox.admin.model.ThingRepo;
+
+@Service
+public class EventBindingService {
+
+	private final EventBindingRepo repoEventBinding;
+	
+	EventBindingService(EventBindingRepo repoEventBinding) {
+		this.repoEventBinding = repoEventBinding;
+	}
+	
+	public Collection<EventBindingMapping> getEventBindingListener() {
+		
+		Map<String , EventBindingMapping> tempResult = new HashMap<String , EventBindingMapping >();
+		
+		List<EventBinding> bindingList = (List<EventBinding>) this.repoEventBinding.findAll();
+		
+		for (Iterator<EventBinding> iterator = bindingList.iterator(); iterator.hasNext();) {
+			EventBinding eventBinding = (EventBinding) iterator.next();
+			String eventKey = eventBinding.getEvent().getKey();
+			if(tempResult.containsKey(eventKey)) {
+				tempResult.get(eventKey).setListener(eventBinding.getListener());
+			}
+			else{
+				EventBindingMapping ebm = new EventBindingMapping();
+				ebm.setEvent(eventBinding.getEvent());
+				ebm.setListener(eventBinding.getListener());
+				tempResult.put(eventKey, ebm);
+			};
+		}
+		return tempResult.values();
+	}
+	
+	public int addEventBindingListener(BindingListener bindingListener) {
+		//TODO : check that (event.thingId) != (listener.thingId)
+		Set<EventBinding> bindingSet = new HashSet<EventBinding>();
+		Set<Integer> listListener = bindingListener.getListenersId();
+		for (Iterator<Integer> iterator = listListener.iterator(); iterator.hasNext();) {
+			EventBinding binding = new EventBinding();
+			binding.setEvent(new Cloudevent(bindingListener.getEventId()));
+			Integer listenerId = (Integer) iterator.next();
+			binding.setListener(new Listener(listenerId));
+			bindingSet.add(binding);
+		}		
+		repoEventBinding.saveAll(bindingSet);
+		return bindingSet.size();
+	}
+	
+}

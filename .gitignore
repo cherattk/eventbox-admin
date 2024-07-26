@@ -33,7 +33,6 @@ build/
 .vscode/
 
 ###
-dev/
 data/
 node_modules/
 node/

@@ -11,8 +11,7 @@ export default class ContainerEventBinding extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			listEventBinding: EventBindingStore.getEventBinding(),
-			//listEvent : Thingstore.getEvent()
+			listEvent : Thingstore.getEvent()
 		}
 		this.internalListener = [];
 
@@ -20,12 +19,13 @@ export default class ContainerEventBinding extends React.Component {
 
 	componentDidMount() {
 		var self = this;
-		this.internalListener.push(DataEvent.addListener('update-list-eventbinding', function(dataEvent) {
+		/*this.internalListener.push(DataEvent.addListener('update-list-eventbinding', function(dataEvent) {
 			self.setState({ listEventBinding: EventBindingStore.getEventBinding() });
+		}));*/
+		this.internalListener.push(DataEvent.addListener('update-list-event', function(dataEvent) {
+			self.setState({ listEvent: Thingstore.getEvent() });
 		}));
-		/*this.internalListener.push(DataEvent.addListener('update-list-event', function(dataEvent) {
-			self.setState({ listEventBinding: EventBindingStore.getEventBinding() });
-		}));
+		/*
 		this.internalListener.push(DataEvent.addListener('update-list-thing', function(dataEvent) {
 			self.setState({ listEventBinding: EventBindingStore.getEventBinding() });
 		}));
@@ -44,11 +44,11 @@ export default class ContainerEventBinding extends React.Component {
 		return (
 			<div className="p-4 position-relative">
 				{
-					this.state.listEventBinding.length > 0 ?
-						this.state.listEventBinding.map(function(eventBinding) {
+					this.state.listEvent.length > 0 ?
+						this.state.listEvent.map(function(event) {
 							return <ElementEventBinding
-								key={"evl-" + eventBinding.id}
-								eventBinding={eventBinding} />
+								key={"evl-" + event.id}
+								event={event} />
 						}) : <EmptyState text="There is no registered event to listen to" />
 				}
 
