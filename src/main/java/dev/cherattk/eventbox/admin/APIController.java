@@ -22,6 +22,7 @@ import dev.cherattk.eventbox.admin.model.Thing;
 import dev.cherattk.eventbox.admin.service.EventBindingService;
 import dev.cherattk.eventbox.admin.service.ThingService;
 import dev.cherattk.eventbox.admin.http.BindingListener;
+import dev.cherattk.eventbox.admin.http.Response;
 
 @RestController
 @RequestMapping("/api")
@@ -51,7 +52,7 @@ public class APIController {
 		try {
 			int savedSize = eventBindingService.addEventBindingListener(reqBody);
 			if (savedSize > 0) {
-				return ResponseEntity.ok().body("success");
+				return ResponseEntity.ok().body(Response.success());
 			} else {
 				return ResponseEntity.badRequest().body("error 1");
 			}
@@ -75,15 +76,15 @@ public class APIController {
 	 */
 
 	@PostMapping("/things")
-	public Thing addThing(@RequestBody Thing _thing) {
-		return thingService.saveThing(_thing);
+	public Thing addThing(@RequestBody Thing thing) {
+		return thingService.saveThing(thing);
 	}
 
 	@PutMapping("/things/{thing_id}")
 	public ResponseEntity<String> updateThing(@PathVariable("thing_id") int thingId, @RequestBody Thing thing) {
 		if (thingId == thing.getId()) {
 			if (thingService.updateThing(thing)) {
-				return ResponseEntity.ok().body("success");
+				return ResponseEntity.ok().body(Response.success());
 			};
 			return ResponseEntity.badRequest().body("error");
 		} else {
@@ -94,7 +95,7 @@ public class APIController {
 	@DeleteMapping("/things/{thing_id}")
 	public ResponseEntity<String> removeThing(@PathVariable("thing_id") int thingId) {
 		if (thingService.deleteThing(thingId)) {
-			return ResponseEntity.ok().body("success");
+			return ResponseEntity.ok().body(Response.success());
 		} else {
 			return ResponseEntity.badRequest().body("error");
 		}
@@ -117,7 +118,7 @@ public class APIController {
 	public ResponseEntity<String> updateCloudevent(@PathVariable("event_id") int eventId, @RequestBody Cloudevent freshEvent) {
 		if (eventId == freshEvent.getId()) {
 			if (thingService.updateCloudevent(freshEvent)) {
-				return ResponseEntity.ok().body("success");
+				return ResponseEntity.ok().body(Response.success());
 			};
 			return ResponseEntity.badRequest().body("error");
 		} else {
@@ -128,7 +129,7 @@ public class APIController {
 	@DeleteMapping("/cloudevents/{event_id}")
 	public ResponseEntity<String> removeCloudevent(@PathVariable("event_id") int eventId) {
 		if (thingService.deleteCloudevent(eventId)) {
-			return ResponseEntity.ok().body("success");
+			return ResponseEntity.ok().body(Response.success());
 		} else {
 			return ResponseEntity.badRequest().body("error");
 		}
@@ -151,7 +152,7 @@ public class APIController {
 	public ResponseEntity<String> updateListener(@PathVariable("listener_id") int listenerId, @RequestBody Listener freshListener) {
 		if (listenerId == freshListener.getId()) {
 			if (thingService.updateListener(freshListener)) {
-				return ResponseEntity.ok().body("success");
+				return ResponseEntity.ok().body(Response.success());
 			};
 			return ResponseEntity.badRequest().body("error");
 		} else {
@@ -162,7 +163,7 @@ public class APIController {
 	@DeleteMapping("/listeners/{listener_id}")
 	public ResponseEntity<String> removeListener(@PathVariable("listener_id") int listenerId) {
 		if (thingService.deleteListener(listenerId)) {
-			return ResponseEntity.ok().body("success");
+			return ResponseEntity.ok().body(Response.success());
 		} else {
 			return ResponseEntity.badRequest().body("error");
 		}

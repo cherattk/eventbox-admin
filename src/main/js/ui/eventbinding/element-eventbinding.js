@@ -157,12 +157,12 @@ export default class ElementEventBinding extends React.Component {
 				}
 
 				<div className="d-flex justify-content-between">
-					<button type="button" className="btn btn-primary me-2 px-3"
+					<button type="button" className="btn btn-primary px-3"
 						value={this.props.event.id}
 						onClick={this.getBindListenerForm.bind(this)}>
-						Bind Listener
-						{/*<i className="bi bi-pencil-square ms-2"></i>*/}
-						<i className="bi bi-diagram-3-fill ms-2"></i>
+						Bind listener
+						<i className="bi bi-plus-circle ms-2"></i>
+						{/*<i className="bi bi-diagram-3-fill ms-2"></i>*/}
 					</button>
 				</div>
 

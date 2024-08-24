@@ -1,7 +1,7 @@
 package dev.cherattk.eventbox.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.cherattk.eventbox.admin.http.BindingListener;
+import dev.cherattk.eventbox.admin.http.Response;
 import dev.cherattk.eventbox.admin.model.Cloudevent;
 import dev.cherattk.eventbox.admin.model.EventBindingMapping;
 import dev.cherattk.eventbox.admin.model.Listener;
@@ -50,24 +52,24 @@ class APIControllerTest {
 
 	@MockBean
 	private EventBindingService mockEventBindingService;
-
+	
 	@Test
 	@DisplayName("Test GET \"/api/things\"")
 	public void getAllThingsTest() throws Exception {
 
 		String testedURL = "/api/things";
 
-		List<Thing> mockListThing = List.of(new Thing(1), new Thing(2), new Thing(3));
+		List<Thing> listThing = List.of(new Thing(1), new Thing(2), new Thing(3));
 
-		when(mockThingService.getAllThings()).thenReturn(mockListThing);
-
+		when(mockThingService.getAllThings()).thenReturn(listThing);
+		
 		ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.get(testedURL));
-		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-
-		String expectedJsonArray = objectMapper.writeValueAsString(mockListThing);
+		
+		resultActions.andExpect(MockMvcResultMatchers.status().isOk());	
+		String expectedJsonArray = objectMapper.writeValueAsString(listThing);
+		resultActions.andExpect(MockMvcResultMatchers.content().string(expectedJsonArray));
 		// assertion
-		assertEquals(resultActions.andReturn().getResponse().getContentAsString()
-		, expectedJsonArray);
+		//assertEquals(resultActions.andReturn().getResponse().getContentAsString(), expectedJsonArray);
 	}
 
 	@Test
@@ -75,22 +77,24 @@ class APIControllerTest {
 	public void addThingTest() throws Exception {
 
 		String testedURL = "/api/things";
-		Thing mockReqBody = new Thing(1);
-		String mockJsonPayload = objectMapper.writeValueAsString(mockReqBody);
+		Thing reqBody = new Thing(1);
+		String mockJsonPayload = objectMapper.writeValueAsString(reqBody);
 
 		MockHttpServletRequestBuilder postRequest = MockMvcRequestBuilders.post(testedURL)
-				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mockJsonPayload);
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mockJsonPayload);
 
-		when(mockThingService.saveThing(mockReqBody)).thenReturn(mockReqBody);
+		when(mockThingService.saveThing(reqBody)).thenReturn(reqBody);
 
 		ResultActions resultActions = this.mockMvc.perform(postRequest);
 		// assertion
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(mockReqBody.getId())));
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(mockReqBody.getName())));
-		resultActions
-				.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(mockReqBody.getDescription())));
-		String expectedCategoryValue = Thing.ThingCategory.WEB_SERVICE.name();
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(reqBody.getId())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(reqBody.getName())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(reqBody.getDescription())));
+		
+		String expectedCategoryValue = Thing.ThingCategory.WEB_SERVICE.name(); // default value
 		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.category", Matchers.is(expectedCategoryValue)));
 	}
 
@@ -99,18 +103,19 @@ class APIControllerTest {
 	public void updateThingTest() throws Exception {
 
 		String testedURL = "/api/things/{thing_id}";
-		Thing mockReqBody = new Thing(1);
-		String mockJsonPayload = objectMapper.writeValueAsString(mockReqBody);
+		Thing reqBody = new Thing(1);
+		String mockJsonPayload = objectMapper.writeValueAsString(reqBody);
 		Integer thingId = 1;
 
 		MockHttpServletRequestBuilder putRequest = MockMvcRequestBuilders.put(testedURL, thingId)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mockJsonPayload);
 
-		when(mockThingService.updateThing(mockReqBody)).thenReturn(true);
+		when(mockThingService.updateThing(reqBody)).thenReturn(true);
 
 		ResultActions resultActions = this.mockMvc.perform(putRequest);
-		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		resultActions.andExpect(MockMvcResultMatchers.status().isOk());		
+		String expectedResponse = dev.cherattk.eventbox.admin.http.Response.success();
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(expectedResponse)));
 	}
 
 	@Test
@@ -126,27 +131,28 @@ class APIControllerTest {
 
 		ResultActions resultActions = this.mockMvc.perform(deleteRequest);
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		String expectedResponse = dev.cherattk.eventbox.admin.http.Response.success();
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(expectedResponse)));
 	}
 
 	/////////////////////////////////////////////////
 	// Test Cloudevents API Method
-	///////////////////////////////////////////////////
+	/////////////////////////////////////////////////
 	@Test
 	@DisplayName("Test GET \"/api/cloudevents\"")
 	public void getAllCloudeventsTest() throws Exception {
 
 		String testedURL = "/api/cloudevents";
-		List<Cloudevent> mockList = List.of(new Cloudevent(1), new Cloudevent(2), new Cloudevent(3));
-		String expectedJsonArray = objectMapper.writeValueAsString(mockList);
+		List<Cloudevent> listCE = List.of(new Cloudevent(1), new Cloudevent(2), new Cloudevent(3));
+		String expectedJsonArray = objectMapper.writeValueAsString(listCE);
 
-		when(mockThingService.getAllCloudevents()).thenReturn(mockList);
+		when(mockThingService.getAllCloudevents()).thenReturn(listCE);
 		ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.get(testedURL));
+		
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(expectedJsonArray)));
 		// assertion
-		assertEquals(expectedJsonArray , 
-				resultActions.andReturn().getResponse().getContentAsString());
+		//assertEquals(expectedJsonArray, resultActions.andReturn().getResponse().getContentAsString());
 	}
 
 	@Test
@@ -154,31 +160,43 @@ class APIControllerTest {
 	public void addCloudeventTest() throws Exception {
 
 		String testedURL = "/api/cloudevents";
-		Cloudevent mockReqBody = new Cloudevent(1);
-		String mockJsonPayload = objectMapper.writeValueAsString(mockReqBody);
+		Cloudevent reqBody = new Cloudevent();
+		String mockJsonPayload = objectMapper.writeValueAsString(reqBody);
 
 		MockHttpServletRequestBuilder postRequest = MockMvcRequestBuilders.post(testedURL)
-				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mockJsonPayload);
-
-		when(mockThingService.saveCloudevent(mockReqBody)).thenReturn(mockReqBody);
-		this.mockMvc.perform(postRequest).andExpect(MockMvcResultMatchers.status().isOk());
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mockJsonPayload);
+		
+		Cloudevent savedCloudevent = reqBody;
+		savedCloudevent.setId(111); // mock the newly created id by CrudRepository
+		
+		when(mockThingService.saveCloudevent(reqBody)).thenReturn(savedCloudevent);
+		
+		ResultActions resultActions = this.mockMvc.perform(postRequest);
+		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+		
+		String savedCloudeventAsJSON = objectMapper.writeValueAsString(savedCloudevent);
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(savedCloudeventAsJSON)));
 	}
-
+	
 	@Test
 	@DisplayName("Test PUT \"/api/cloudevents\"")
 	public void updateCloudeventTest() throws Exception {
 
 		String testedURL = "/api/cloudevents/{event_id}";
-		Cloudevent mockReqBody = new Cloudevent(1);
+		Cloudevent reqBody = new Cloudevent(1);
 		Integer eventId = 1;
 
-		String mockJsonPayload = objectMapper.writeValueAsString(mockReqBody);
+		String mockJsonPayload = objectMapper.writeValueAsString(reqBody);
 		MockHttpServletRequestBuilder putRequest = MockMvcRequestBuilders.put(testedURL, eventId)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mockJsonPayload);
 
-		when(mockThingService.updateCloudevent(mockReqBody)).thenReturn(true);
-		this.mockMvc.perform(putRequest).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		when(mockThingService.updateCloudevent(reqBody)).thenReturn(true);
+		
+		ResultActions resultActions = this.mockMvc.perform(putRequest);
+		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response", Matchers.is("success")));
 
 	}
 
@@ -192,8 +210,11 @@ class APIControllerTest {
 		MockHttpServletRequestBuilder deleteRequest = MockMvcRequestBuilders.delete(testedURL, eventId);
 
 		when(mockThingService.deleteCloudevent(eventId)).thenReturn(true);
-		this.mockMvc.perform(deleteRequest).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		ResultActions resultActions = this.mockMvc.perform(deleteRequest);
+		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+		
+		String expectedResponseBody = dev.cherattk.eventbox.admin.http.Response.success();
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(expectedResponseBody)));
 
 	}
 
@@ -221,21 +242,21 @@ class APIControllerTest {
 	public void addListenerTest() throws Exception {
 
 		String testedURL = "/api/listeners";
-		Listener mockReqBody = new Listener(1);
-		mockReqBody.setThingId(1);
-		String mockJsonPayload = objectMapper.writeValueAsString(mockReqBody);
+		Listener reqBody = new Listener(1);
+		reqBody.setThingId(1);
+		String mockJsonPayload = objectMapper.writeValueAsString(reqBody);
 
 		MockHttpServletRequestBuilder postRequest = MockMvcRequestBuilders.post(testedURL)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mockJsonPayload);
 
-		when(mockThingService.saveListener(mockReqBody)).thenReturn(mockReqBody);
+		when(mockThingService.saveListener(reqBody)).thenReturn(reqBody);
 
 		ResultActions resultActions = this.mockMvc.perform(postRequest);
 		// assertion
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(mockReqBody.getId())));
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(mockReqBody.getName())));
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(mockReqBody.getUrl())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(reqBody.getId())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(reqBody.getName())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(reqBody.getUrl())));
 	}
 
 	@Test
@@ -243,18 +264,20 @@ class APIControllerTest {
 	public void updateListenerTest() throws Exception {
 
 		String testedURL = "/api/listeners/{listener_id}";
-		Listener mockReqBody = new Listener(1);
-		String mockJsonPayload = objectMapper.writeValueAsString(mockReqBody);
+		Listener reqBody = new Listener(1);
 		Integer thingId = 1;
-
+		String mockJsonPayload = objectMapper.writeValueAsString(reqBody);
+		
 		MockHttpServletRequestBuilder putRequest = MockMvcRequestBuilders.put(testedURL, thingId)
-				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(mockJsonPayload);
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mockJsonPayload);
 
-		when(mockThingService.updateListener(mockReqBody)).thenReturn(true);
+		when(mockThingService.updateListener(reqBody)).thenReturn(true);
 
 		ResultActions resultActions = this.mockMvc.perform(putRequest);
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response", Matchers.is("success")));
 	}
 
 	@Test
@@ -270,7 +293,8 @@ class APIControllerTest {
 
 		ResultActions resultActions = this.mockMvc.perform(deleteRequest);
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		String successResBody = dev.cherattk.eventbox.admin.http.Response.success();
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(successResBody)));
 	}
 
 	@Test
@@ -311,7 +335,9 @@ class APIControllerTest {
 
 		ResultActions resultActions = this.mockMvc.perform(postRequest);
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
-		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is("success")));
+		
+		String successResponseBody = dev.cherattk.eventbox.admin.http.Response.success();
+		resultActions.andExpect(MockMvcResultMatchers.content().string(Matchers.is(successResponseBody)));
 	}
 
 }

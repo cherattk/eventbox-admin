@@ -35,8 +35,8 @@ public class ThingService {
 		return (List<Thing>) repoThing.findAll();
 	}
 
-	public Thing saveThing(Thing _thing) {
-		return repoThing.save(_thing);
+	public Thing saveThing(Thing thing) {
+		return repoThing.save(thing);
 	}
 
 	public boolean updateThing(Thing thing) {
