@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.cherattk.eventbox.admin.model.Cloudevent;
+import dev.cherattk.eventbox.admin.model.EventBinding;
 import dev.cherattk.eventbox.admin.model.EventBindingMapping;
 import dev.cherattk.eventbox.admin.model.Listener;
 import dev.cherattk.eventbox.admin.model.Thing;
@@ -44,6 +45,7 @@ public class APIController {
 	////////////////////////////////////////////////////
 	@GetMapping("/eventbinding")
 	public Collection<EventBindingMapping> getAllEventBinding() {
+		// TODO authenticate broker before sending response
 		return eventBindingService.getEventBindingListener();
 	}
 

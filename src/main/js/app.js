@@ -43,17 +43,17 @@ function App() {
 				<div className="tab-content">
 					<div className="tab-pane fade show active" id="nav-thing"
 						role="tabpanel">
-						<h2 className="bg-light h3 m-0 p-3 text-primary border-bottom">Thing Manager</h2>
+						<h2 className="bg-light h3 m-0 py-3 px-4 text-primary border-bottom">Thing Manager</h2>
 						<ContainerThing />
 					</div>
 					<div className="tab-pane fade" id="nav-eventbinding"
 						role="tabpanel">
-						<h2 className="bg-light h3 m-0 p-3 text-primary border-bottom">Binding Manager</h2>
+						<h2 className="bg-light h3 m-0 py-3 px-4 text-primary border-bottom">Binding Manager</h2>
 						<ContainerEventBinding />
 					</div>
 					<div className="tab-pane fade" id="nav-activity"
             role="tabpanel">
-						<h2 className="bg-light h3 m-0 p-3 text-primary border-bottom">Activity View</h2>
+						<h2 className="bg-light h3 m-0 py-3 px-4 text-primary border-bottom">Activity View</h2>
 						{/*<ContainerActivity />*/}
           </div> 
 				</div>

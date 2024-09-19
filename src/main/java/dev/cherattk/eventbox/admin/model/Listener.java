@@ -30,8 +30,17 @@ public class Listener {
 	@Column( name= "url")
 	protected String url;
 	
-	public Listener() {}
+	public Listener() {}	
 	
+	public Listener(Integer id, Integer thingId, String name, String url) {
+		this.id = id;
+		this.thingId = thingId;
+		this.name = name;
+		this.url = url;
+	}
+
+
+
 	/**
 	 * This constructor is used in APIController.bindListener() method
 	 * @param id

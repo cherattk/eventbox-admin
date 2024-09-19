@@ -78,15 +78,15 @@
 							<goal>npm</goal>
 						</goals>
 					</execution>
-					<!--<execution>
-						<id>npm run build (webpack) </id>
+					<execution>
+						<id>webpack build</id>
 						<goals>
 							<goal>npm</goal>
 						</goals>
 						<configuration>
 							<arguments>run build</arguments>
 						</configuration>
-					</execution>-->
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

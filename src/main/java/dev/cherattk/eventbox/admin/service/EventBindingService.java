@@ -1,9 +1,11 @@
 package dev.cherattk.eventbox.admin.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,17 +33,19 @@ public class EventBindingService {
 		this.repoEventBinding = repoEventBinding;
 	}
 	
+	
 	public Collection<EventBindingMapping> getEventBindingListener() {
+				
+		List<EventBinding> bindingList = (ArrayList<EventBinding>) this.repoEventBinding.findAll();
 		
-		Map<String , EventBindingMapping> tempResult = new HashMap<String , EventBindingMapping >();
-		
-		List<EventBinding> bindingList = (List<EventBinding>) this.repoEventBinding.findAll();
+		Map<String , EventBindingMapping> tempResult = new LinkedHashMap<String , EventBindingMapping >();
 		
 		for (Iterator<EventBinding> iterator = bindingList.iterator(); iterator.hasNext();) {
 			EventBinding eventBinding = (EventBinding) iterator.next();
 			String eventKey = eventBinding.getEvent().getKey();
 			if(tempResult.containsKey(eventKey)) {
-				tempResult.get(eventKey).setListener(eventBinding.getListener());
+				EventBindingMapping bindingMap = tempResult.get(eventKey);
+				bindingMap.setListener(eventBinding.getListener());
 			}
 			else{
 				EventBindingMapping ebm = new EventBindingMapping();
@@ -50,7 +54,7 @@ public class EventBindingService {
 				tempResult.put(eventKey, ebm);
 			};
 		}
-		return tempResult.values();
+		return new ArrayList<EventBindingMapping>(tempResult.values());
 	}
 	
 	public int addEventBindingListener(BindingListener bindingListener) {

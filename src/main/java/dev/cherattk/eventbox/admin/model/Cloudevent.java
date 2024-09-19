@@ -54,8 +54,13 @@ public class Cloudevent{
 	@Column( name= "ce_dataschema" , nullable = true)
 	protected String dataschema;
 	
-	public Cloudevent() {
-		this.key = this.specversion + "," + this.source + "," + this.type;
+	public Cloudevent() {}
+	
+	public Cloudevent(Integer id , String specversion , String source , String type) {
+		this.id = id;
+		this.specversion = specversion;
+		this.source = source;
+		this.type = type;
 	}
 
 	/**
@@ -67,7 +72,7 @@ public class Cloudevent{
 	}
 	
 	public String getKey() {
-		return this.key;
+		return this.specversion + "," + this.source + "," + this.type;
 	}
 	
 	public Integer getId() {

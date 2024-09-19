@@ -81,7 +81,7 @@ export default class FormEventBinding extends React.Component {
 		var url = Config.url.data.eventbinding(method);
 		const data = {
 			eventId: this.state.event.id,
-			listeners: this.state.activeEndpoint
+			listenersId: this.state.activeEndpoint
 		}
 		console.log(data);
 

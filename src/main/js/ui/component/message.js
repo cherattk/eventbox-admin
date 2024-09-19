@@ -47,7 +47,7 @@ export function Alert() {
   });
 
   return (
-		<div className="position-fixed w-100 top-0 start-0">
+		<div className="position-fixed w-100 top-0 start-0 z-1">
     <div className={`alert alert-dismissible alert-success rounded-0 shadow text-center ${color} ${display}`} role="alert">
       {text}
       <button type="button" onClick={() => { setDisplay('d-none'); }} 
