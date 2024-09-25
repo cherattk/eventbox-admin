@@ -34,6 +34,7 @@ public class EventBindingService {
 	}
 	
 	
+	// TODO : change name to getAllEventBindingMappin()
 	public Collection<EventBindingMapping> getEventBindingListener() {
 				
 		List<EventBinding> bindingList = (ArrayList<EventBinding>) this.repoEventBinding.findAll();
@@ -70,6 +71,22 @@ public class EventBindingService {
 		}		
 		repoEventBinding.saveAll(bindingSet);
 		return bindingSet.size();
+	}
+	
+	public boolean deleteEventBinding(Integer eventId , Integer listenerId) {
+		
+		Cloudevent eventObj = new Cloudevent(eventId);		
+		Listener listenerObj = new Listener(listenerId);
+		
+		List<EventBinding> result = repoEventBinding.findByEventAndListener(eventObj, listenerObj);
+		
+		if (result.size() == 1) {
+			EventBinding binding = result.get(0);
+			repoEventBinding.deleteById(binding.getId());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

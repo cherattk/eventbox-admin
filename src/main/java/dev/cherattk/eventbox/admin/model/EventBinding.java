@@ -30,6 +30,7 @@ public class EventBinding {
 	
 	@ManyToOne
 	@JoinColumn(name = "listener" , referencedColumnName="id" , nullable = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	protected Listener listener;
 
 	public EventBinding() {}

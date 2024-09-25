@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -15,8 +17,8 @@ import org.springframework.http.MediaType;
 
 @Entity
 @Table(uniqueConstraints = { 
-		@UniqueConstraint(name="unique_Thing_Spec_Source_Type" , 
-				columnNames = { "thingId" , "ce_specversion", "ce_source" , "ce_type" }) 
+		@UniqueConstraint(name="unique_Source_Type" , 
+				columnNames = { "source" , "type" }) 
 })
 public class Cloudevent{
 	
@@ -24,13 +26,12 @@ public class Cloudevent{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer id;
 	
-	@Column( name= "thingId" , nullable = false)
-	protected Integer thingId;
+	@ManyToOne
+	@JoinColumn( name = "thing_id")
+	protected Thing thing;
 	
-	@Column( name= "name")
 	protected String name = "name";
 	
-	@Column( name= "description")
 	protected String description = "description";
 	
 	@Transient
@@ -39,19 +40,19 @@ public class Cloudevent{
 	/////////////////////////////////////////
 	// CloudEvent Attributes
 	////////////////////////////////////////
-	@Column( name= "ce_specversion" , nullable = false)
+	@Column(nullable = false)
 	protected String specversion;
 	
-	@Column( name= "ce_source" , nullable = false)
+	@Column(nullable = false)
 	protected String source;
 	
-	@Column( name= "ce_type" , nullable = false)
+	@Column(nullable = false)
 	protected String type;
 	
-	@Column( name= "ce_datacontenttype")
+	@Column(nullable = false)
 	protected String datacontenttype = MediaType.APPLICATION_JSON_VALUE;
 	
-	@Column( name= "ce_dataschema" , nullable = true)
+	@Column(nullable = true)
 	protected String dataschema;
 	
 	public Cloudevent() {}
@@ -79,81 +80,72 @@ public class Cloudevent{
 		return id;
 	}
 	
-	public Cloudevent setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
-		return this;
 	}
 	
-	public Cloudevent setThingId(Integer thingId) {
-		 this.thingId = thingId;
-		 return this;
+	public void setThing(Thing thing) {
+		 this.thing = thing;
 	}
 	
-	public Integer getThingId() {
-		return thingId;
+	public Thing getThing() {
+		return thing;
 	}
 	
 	public String getName() {
 		return name;
 	}
 
-	public Cloudevent setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 	
 	public String getDescription() {
 		return description;
 	}
 
-	public Cloudevent setDescription(String description) {
+	public void setDescription(String description) {
 		this.description = description;
-		return this;
 	}
 	
 	public String getSpecversion() {
 		return specversion;
 	}
 
-	public Cloudevent setSpecversion(String specversion) {
+	public void setSpecversion(String specversion) {
 		this.specversion = specversion;
-		return this;
 	}
 
 	public String getSource() {
 		return source;
 	}
 
-	public Cloudevent setSource(String source) {
+	public void setSource(String source) {
 		this.source = source;
-		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public Cloudevent setType(String type) {
+	public void setType(String type) {
 		this.type = type;
-		return this;
 	}
 
 	public String getDatacontenttype() {
 		return datacontenttype;
 	}
 
-	public Cloudevent setDatacontenttype(String datacontenttype) {
+	public void setDatacontenttype(String datacontenttype) {
 		this.datacontenttype = datacontenttype;
-		return this;
 	}
 
 	public String getDataschema() {
 		return dataschema;
 	}
 
-	public Cloudevent setDataschema(String dataschema) {
+	public void setDataschema(String dataschema) {
 		this.dataschema = dataschema;
-		return this;
 	}
 	
 	@Override

@@ -28,7 +28,7 @@ const Config = {
           return `${hostAPI}/things/${thing_id}`;
         }
       },
-      event: function (method, thing_id, event_id) {
+      event: function (method, event_id) {
         if (method == 'get' || method == 'post') {
           return `${hostAPI}/cloudevents`;
         }
@@ -36,20 +36,20 @@ const Config = {
           return `${hostAPI}/cloudevents/${event_id}`;
         }
       },
-      listener_endpoint:  function (method, thing_id, endpoint_id) {
+      listener_endpoint:  function (method, listener_id) {
         if (method == 'get' || method == 'post') {
           return `${hostAPI}/listeners`;
         }
         if (method == 'put' || method == 'delete') {
-          return `${hostAPI}/listeners/${endpoint_id}`;
+          return `${hostAPI}/listeners/${listener_id}`;
         }
       },
-      eventbinding:  function (method, binding_id) {
+      eventbinding:  function (method , event_id , listener_id) {
         if (method == 'get' || method == 'post') {
           return `${hostAPI}/eventbinding`;
         }
-        if (method == 'put' || method == 'delete') {
-          return `${hostAPI}/eventbinding/${binding_id}`;
+        if (method == 'delete') {
+          return `${hostAPI}/eventbinding/${event_id}/${listener_id}`;
         }
       }
     },

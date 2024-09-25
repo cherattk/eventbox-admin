@@ -4,7 +4,7 @@ import ThingStore from '../../datastore/thingstore';
 import EventBindingStore from '../../datastore/eventbindingstore';
 import { EmptyState } from '../component/message';
 import Config from '../../config';
-import { SummaryEvent } from './component';
+import { SummaryEvent } from './summary-event.js';
 import Schema from '../../datastore/schema';
 
 export default class FormEventBinding extends React.Component {
@@ -41,9 +41,7 @@ export default class FormEventBinding extends React.Component {
 			/////////////////////////////////////////////////
 			var bindedListener = self.getBindedListenerToEvent(_event.id);
 			var freeListener = self.getFreeListener(bindedListener);
-			//////////////////////////
-			// UPDATE COMPONENT STATE
-			//////////////////////////
+			
 			self.setState(function() {
 				return {
 					event: _event,
@@ -87,7 +85,7 @@ export default class FormEventBinding extends React.Component {
 
 		ThingStore.saveData(url, method, data, function(ajaxResponse) {
 			EventBindingStore.loadEventBindingStore(function() {
-				DataEvent.dispatch('update-element-eventbinding', { eventId : data.eventId });
+				DataEvent.dispatch('update-list-eventbinding', { eventId : data.eventId });
 				UIEvent.dispatch('alert-msg', { status: "success", text: "have been successfully saved" });
 				self.close();
 			});
@@ -140,7 +138,7 @@ export default class FormEventBinding extends React.Component {
 	renderListenerEndpoint() {
 		// set list of endpoint
 		var htmlList = this.state.freeListener.map((listener, idx) => {
-			var thingName = ThingStore.getThing({ id: listener.thingId })[0].name;
+			var thingName = ThingStore.getThing({ id: listener.thing.id })[0].name;
 			var key = listener.id;
 			var _checked = (this.state.activeEndpoint.indexOf(listener.id) != -1);
 			return (

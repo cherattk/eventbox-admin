@@ -21,6 +21,7 @@ import dev.cherattk.eventbox.admin.model.EventBinding;
 import dev.cherattk.eventbox.admin.model.EventBindingMapping;
 import dev.cherattk.eventbox.admin.model.EventBindingRepo;
 import dev.cherattk.eventbox.admin.model.Listener;
+import dev.cherattk.eventbox.admin.model.Thing;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class EventBindingServiceTest {
@@ -48,7 +49,8 @@ class EventBindingServiceTest {
 		EventBinding bindingOne = new EventBinding();
 		Cloudevent eventOne = new Cloudevent(1, "1.0" , "source-1" , "event-1");
 		bindingOne.setEvent(eventOne);
-		Listener listenerOne = new Listener(1 , 1 /* thing id */ , "listener-1" , "listener-1");
+		Listener listenerOne = new Listener(1 , "listener-1" , "listener-1");
+		listenerOne.setThing( new Thing(1));
 		bindingOne.setListener(listenerOne);
 		mockFindAllresult.add(bindingOne);
 		
@@ -56,14 +58,16 @@ class EventBindingServiceTest {
 		EventBinding bindingTwo = new EventBinding();
 		Cloudevent eventTwo = new Cloudevent(2, "1.0" , "source-2" , "event-2");
 		bindingTwo.setEvent(eventTwo);
-		Listener listenerTwo = new Listener(2 , 1 /* thing id */, "listener-2" , "listener-2");
+		Listener listenerTwo = new Listener(2 , "listener-2" , "listener-2");
+		listenerTwo.setThing( new Thing(1));
 		bindingTwo.setListener(listenerTwo);
 		mockFindAllresult.add(bindingTwo);
 		
 		// binding #3
 		EventBinding bindingThree = new EventBinding();
 		bindingThree.setEvent(eventTwo);
-		Listener listenerThree = new Listener(3 , 3 /* thing id */ , "listener-3" , "listener-3");
+		Listener listenerThree = new Listener(3 , "listener-3" , "listener-3");
+		listenerThree.setThing( new Thing(1));
 		bindingThree.setListener(listenerThree);
 		mockFindAllresult.add(bindingThree);
 		
@@ -80,10 +84,11 @@ class EventBindingServiceTest {
 	    // expected result
 	    ArrayList<EventBindingMapping> listResult = (ArrayList<EventBindingMapping>) result;
 	    
-	    EventBindingMapping expectedBindingOne = listResult.get(0);
-	    assertTrue(expectedBindingOne.getEvent().equals(eventOne) , "fail 2");
+	    EventBindingMapping expectedEventBindingOne = listResult.get(0);
 	    
-	    Set<Listener> listListenerOne = expectedBindingOne.getListeners();
+	    assertTrue(expectedEventBindingOne.getEvent().equals(eventOne) , "fail 2");
+	    
+	    Set<Listener> listListenerOne = expectedEventBindingOne.getListeners();
 	    assertTrue(listListenerOne.contains(listenerOne) , "fail 3");
 	    
 	    EventBindingMapping expectedBindingTwo = listResult.get(1);

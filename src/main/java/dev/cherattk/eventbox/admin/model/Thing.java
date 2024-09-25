@@ -1,13 +1,20 @@
 package dev.cherattk.eventbox.admin.model;
 
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @Entity
@@ -15,11 +22,21 @@ public class Thing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected Integer id;
+	protected Integer thing_id;
 
 	protected String name = "Thing Name";
 
 	protected String description = "Thing Description";
+	
+	//@OneToMany(mappedBy = "thing" , cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "thing")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private List<Cloudevent> cloudevents;
+	
+	//@OneToMany(mappedBy = "thing" , cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "thing")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private List<Listener> listeners;
 	
 	public static enum ThingCategory {
 		WEB_SERVICE,
@@ -33,15 +50,15 @@ public class Thing {
 	public Thing() {}
 	
 	public Thing(Integer id) {
-		this.id = id;
+		this.thing_id = id;
 	}
 
 	public Integer getId() {
-		return id;
+		return thing_id;
 	}
 
 	public void setId(Integer id) {
-		this.id = id;
+		this.thing_id = id;
 	}
 
 	public void setName(String name) {
@@ -70,7 +87,7 @@ public class Thing {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(category, id, name);
+		return Objects.hash(category, thing_id, name);
 	}
 
 	@Override
@@ -82,7 +99,7 @@ public class Thing {
 		if (getClass() != obj.getClass())
 			return false;
 		Thing other = (Thing) obj;
-		return category == other.category && Objects.equals(id, other.id) && Objects.equals(name, other.name);
+		return category == other.category && Objects.equals(thing_id, other.thing_id) && Objects.equals(name, other.name);
 	}	
 	
 	
@@ -90,7 +107,7 @@ public class Thing {
 	/*
 	 * @Override public String toString() { return
 	 * String.format("{id:%d, name:'%s', description:'%s' , category:'%s'}",
-	 * this.id, this.name, this.description , this.category);: }
+	 * this.thing_id, this.name, this.description , this.category);: }
 	 */
 
 }

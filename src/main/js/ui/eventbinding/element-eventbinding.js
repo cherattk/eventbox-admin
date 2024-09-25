@@ -1,58 +1,67 @@
 import React from 'react';
 import { EmptyState, Spinner } from '../component/message';
-import { UIEvent, DataEvent } from '../../lib/ui-event';
 import ThingStore from '../../datastore/thingstore';
 import EventBindingStore from '../../datastore/eventbindingstore'
-import { SummaryEvent } from './component.js';
+import { DataEvent, UIEvent } from '../../lib/ui-event';
+import {SummaryEvent} from './summary-event.js';
+import Config from '../../config';
 
 export default class ElementEventBinding extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			//event: eventBinding.event,
-			listeners: []
-		}
-		this.internalListener = [];
+		
+		this.DataEventListener = [];
 	}
 
 	componentDidMount() {
-		var _event = this.props.event;
-		var self = this;
-		this.internalListener.push(DataEvent.addListener('update-element-eventbinding', function(dataEvent) {
-			if (dataEvent.message.eventId === _event.id) {
-				this.setState(() => {
-					return {
-						listeners: self.getListenerByEvent(_event)
-					}
-				});
-			}
-		}));
+//		var _event = this.props.event;
+//		var self = this;
+//		this.DataEventListener.push(DataEvent.addListener('update-element-eventbinding', function(dataEvent) {
+//			if (dataEvent.message.eventId === _event.id) {
+//				self.setState(() => {
+//					return {
+//						listeners: self.getListenersByEvent(_event)
+//					}
+//				});
+//			}
+//		}));
+		
+//		this.internalListener.push(DataEvent.addListener('update-list-eventbinding', function() {
+//				self.updatelistEvent();
+//		}));
 
-		this.setState(() => {
-			return {
-				listeners: this.getListenerByEvent(_event)
-			}
-		});
+//		self.updateEventBinding();
+		
 	}
 
 	componentWillUnmount() {
-		this.internalListener.forEach(element_id => {
+		this.DataEventListener.forEach(element_id => {
 			DataEvent.removeListener(element_id);
 		});
 	}
 
-	getListenerByEvent(event) {
-		var listEventBinding = EventBindingStore.getEventBinding();
-		var listeners;
-		for (let i = 0; i < listEventBinding.length; i++) {
-			if (listEventBinding[i].event.id === event.id) {
-				listeners = listEventBinding[i].listeners;
-				i = listEventBinding.length;
-			}
-		}
-		return listeners;
-	}
+//	updateEventBinding() {
+//		console.log("update element-eventbinding state");
+//		var self = this;
+//		self.setState(() => {
+//			return {
+//				listeners: self.getListenersByEvent(self.props.event)
+//			}
+//		});
+//	}
+
+//	getListenersByEvent(event) {
+//		var listEventBinding = EventBindingStore.getEventBinding();
+//		var listeners;
+//		for (let i = 0; i < listEventBinding.length; i++) {
+//			if (listEventBinding[i].event.id === event.id) {
+//				listeners = listEventBinding[i].listeners;
+//				i = listEventBinding.length;
+//			}
+//		}
+//		return listeners;
+//	}
 
 	getBindListenerForm(e) {
 		UIEvent.dispatch('show-eventbinding-form', {
@@ -61,11 +70,20 @@ export default class ElementEventBinding extends React.Component {
 		});
 	}
 
-	deleteListener(e) {
-		// todo : use some modal component
-		let ok = window.confirm(`You are going to delete the listener : ${e.currentTarget.value} ? ' + '\n Are you sure ?`);
+	deleteListener(event_id, listener_id) {
+		// todo : use modal component
+		var self = this;
+		let ok = window.confirm(`You are going to delete the listener : .... \n Are you sure ?`);
 		if (ok) {
-			//EventMapManager.deleteData('listener', this.state.listener.id);
+			var method = "delete".toLocaleLowerCase();
+			var url = Config.url.data.eventbinding(method, event_id, listener_id);
+			ThingStore.sendAjaxRequest(url, method, "", function(ajaxResponse) {
+				UIEvent.dispatch('alert-msg', { status: "success", text: "have been successfully deleted" });
+				DataEvent.dispatch('update-list-eventbinding');
+//				EventBindingStore.loadEventBindingStore(function() {
+//					self.updateEventBinding();
+//				});
+			});
 		}
 	}
 
@@ -92,31 +110,29 @@ export default class ElementEventBinding extends React.Component {
 
 	renderListenerEndpoint() {
 		var htmlList = [];
+		var self = this;
 		// console.log("listener endpoint :", this.props.listener);
 		//if (this.props.eventBinding.listeners.length) {
-		this.state.listeners.forEach((element, idx) => {
-			let thingName = ThingStore.getThing({ id: element.thingId })[0].name;
-			let endpoint = ThingStore.getListennerEndpoint({ id: element.id });
+		this.props.listeners.forEach((element, idx) => {
 			// console.log("endpoint : ", endpoint);
 			htmlList.push(
-				<div key={idx + "-" + endpoint[0].id}
+				<div key={idx + "-" + element.id}
 					className="list-group-item pt-2 align-items-center d-flex justify-content-between">
 					<div>
 						<p className="m-0 mb-1">
 							<label className='text-primary me-2'>Thing :</label>
-							{thingName}
+							{element.thing.name}
 						</p>
 						<p className="m-0 mb-1">
 							<label className='text-primary me-2'> Endpoint :</label>
 							<label>
-								{endpoint[0].url}
+								{element.url}
 							</label>
 						</p>
 					</div>
 					<div>
 						<button type="button" className="btn btn-danger btn-sm"
-							value={element.id}
-							onClick={this.deleteListener.bind(this)}>
+							onClick={this.deleteListener.bind(this, self.props.event.id, element.id)}>
 							Delete
 							<i className="bi bi-trash3-fill ms-2"></i>
 						</button>
@@ -148,9 +164,10 @@ export default class ElementEventBinding extends React.Component {
 		return (
 			<div className="bg-light border mb-4 p-3">
 
-				<SummaryEvent event={this.props.event} />
+				<SummaryEvent event={this.props.event}/>
 
-				{this.state.listeners != null && this.state.listeners.length > 0 ? this.renderListenerEndpoint()
+
+				{this.props.listeners != null && this.props.listeners.length > 0 ? this.renderListenerEndpoint()
 					: <div className="align-items-center bg-white border d-flex mb-4 p-3 rounded">
 						<i className="bi bi-info-circle-fill me-3 text-primary fs-3"></i> There is no listener attached to this event
 					</div>

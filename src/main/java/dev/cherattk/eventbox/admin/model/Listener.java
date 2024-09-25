@@ -7,13 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = { 
-		@UniqueConstraint(name="unique_Thing_Url" , 
-				columnNames = { "thingId" , "url"}) 
+		@UniqueConstraint(name="unique_Url" , 
+				columnNames = { "url"}) 
 })
 public class Listener {
 
@@ -21,8 +23,9 @@ public class Listener {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer id;
 
-	@Column( name= "thingId")
-	protected Integer thingId;
+	@ManyToOne
+	@JoinColumn( name = "thing_id")
+	protected Thing thing;
 	
 	@Column( name= "name")
 	protected String name;
@@ -32,9 +35,8 @@ public class Listener {
 	
 	public Listener() {}	
 	
-	public Listener(Integer id, Integer thingId, String name, String url) {
+	public Listener(Integer id, String name, String url) {
 		this.id = id;
-		this.thingId = thingId;
 		this.name = name;
 		this.url = url;
 	}
@@ -66,12 +68,12 @@ public class Listener {
 	}
 
 
-	public Integer getThingId() {
-		return thingId;
+	public Thing getThing() {
+		return thing;
 	}
 
-	public void setThingId(Integer thingId) {
-		this.thingId = thingId;
+	public void setThing(Thing thing) {
+		this.thing = thing;
 	}
 
 	public String getUrl() {
@@ -84,7 +86,7 @@ public class Listener {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(thingId, url);
+		return Objects.hash(url);
 	}
 
 	@Override
@@ -96,7 +98,7 @@ public class Listener {
 		if (getClass() != obj.getClass())
 			return false;
 		Listener other = (Listener) obj;
-		return Objects.equals(thingId, other.thingId) && Objects.equals(url, other.url);
+		return Objects.equals(url, other.url);
 	}
 	
 	

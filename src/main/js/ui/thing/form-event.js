@@ -15,7 +15,6 @@ export default class FormEvent extends React.Component {
   initialState() {
     return {
       actionForm: "",
-      thing: DataSchema.thingSchema(),
       event: DataSchema.eventSchema()
     };
   }
@@ -28,7 +27,7 @@ export default class FormEvent extends React.Component {
       // edit item
       if (uiEvent.message.actionForm == "edit") {
         // console.log(ThingStore);
-        let _event = ThingStore.getEvent({ id: uiEvent.message.event_id });
+        let _event = ThingStore.getEventByArrayCriteria([ "id" , uiEvent.message.eventId ]);
         if (_event.length > 0) {
           event = _event[0];
         }
@@ -36,15 +35,13 @@ export default class FormEvent extends React.Component {
       // add new item
       else if (uiEvent.message.actionForm == "add") {
         event = DataSchema.eventSchema();
-        event.thingId = uiEvent.message.thingId;
+        event.thing = ThingStore.getThing({ id: uiEvent.message.thingId })[0];
       }
 
-      let _thing = ThingStore.getThing({ id: uiEvent.message.thingId });
-      let thing = _thing[0];
+      
       self.setState(function () {
         return {
           actionForm: uiEvent.message.actionForm,
-          thing: thing,
           event: event
         };
       }, function () {
@@ -69,15 +66,16 @@ export default class FormEvent extends React.Component {
     var url = "";
     if (this.state.actionForm == "edit") {
       method = "put".toLocaleLowerCase();
-      url = Config.url.data.event(method, this.state.thing.id, this.state.event.id);
     }
     else if (this.state.actionForm == "add") {
       method = "post".toLocaleLowerCase();
-      url = Config.url.data.event(method, this.state.thing.id);
     }
+		
+		var url = Config.url.data.event(method, this.state.event.id);
     ThingStore.saveData(url, method, this.state.event, function () {
       ThingStore.loadEventStore(function () {
-        DataEvent.dispatch('update-list-event');
+        DataEvent.dispatch('update-list-event' , {thingId : self.state.event.thing.id});
+				DataEvent.dispatch('update-list-eventbinding');
         UIEvent.dispatch('alert-msg', { status: "success", text: "Event has been successfully saved" });
         self.close();
       });
@@ -120,14 +118,14 @@ export default class FormEvent extends React.Component {
 
               <div className="tab-content pt-3">
                 <div className="tab-pane show active" id="event_details" role="tabpanel">
-                  <form onSubmit={this.saveEvent.bind(this)}>
+                  <form onSubmit={this.saveEvent.bind(this)} onReset={this.close.bind(this)}>
 
                     <div className="p-3">
                       <div className="mb-3">
                         <label className="form-label text-primary">
                           Thing
                         </label>
-                        <p className="bg-light rounded px-3 py-2 m-0">{this.state.thing.name}</p>
+                        <p className="bg-light rounded px-3 py-2 m-0">{this.state.event.thing.name}</p>
                         <div className="form-text">
                           Read only value
                         </div>
@@ -156,7 +154,8 @@ export default class FormEvent extends React.Component {
                           <input id="ce_source" type="text" className="form-control"
                             name="source"
                             value={this.state.event.source}
-                            onChange={this.formValue.bind(this)} />
+                            onChange={this.formValue.bind(this)} 
+														required/>
                           <div className="form-text">Example : www.company.com</div>
                         </div>
 
@@ -167,7 +166,8 @@ export default class FormEvent extends React.Component {
                           <input id="ce_type" type="text" className="form-control"
                             name="type"
                             value={this.state.event.type}
-                            onChange={this.formValue.bind(this)} />
+                            onChange={this.formValue.bind(this)} 
+														required/>
                           <div className="form-text">Example : com.company.entity.update</div>
                         </div>
 
@@ -178,7 +178,8 @@ export default class FormEvent extends React.Component {
                           <input id="ce_datacontenttype" type="text" className="form-control"
                             name="datacontenttype"
                             value={this.state.event.datacontenttype}
-                            onChange={this.formValue.bind(this)} />
+                            onChange={this.formValue.bind(this)} 
+														require/>
                           <div className="form-text">
                             Example :
                           </div>
@@ -196,8 +197,7 @@ export default class FormEvent extends React.Component {
                     </div>
                     <div className='d-flex justify-content-between'>
                       <button type="submit" className="btn btn-success me-3">Save</button>
-                      <button type="button" className="btn btn-secondary"
-                        onClick={this.close.bind(this)}>Close</button>
+                      <button type="button" className="btn btn-secondary">Close</button>
                     </div>
 
                   </form>

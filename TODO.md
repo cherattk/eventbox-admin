@@ -8,7 +8,7 @@
 ### popup message
 - fix error message : "error while saving data"
 
-### Event Binding
-
-### UI - Thing form
+### UI Thing form
 - reset tab state in Thing Manager Module  when the user switch to another Module
+
+### UI EventBinding

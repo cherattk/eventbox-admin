@@ -11,7 +11,7 @@ export default class ContainerEventBinding extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			listEvent : Thingstore.getEvent()
+			listEvent: Thingstore.getEvent()
 		}
 		this.internalListener = [];
 
@@ -19,11 +19,8 @@ export default class ContainerEventBinding extends React.Component {
 
 	componentDidMount() {
 		var self = this;
-		/*this.internalListener.push(DataEvent.addListener('update-list-eventbinding', function(dataEvent) {
-			self.setState({ listEventBinding: EventBindingStore.getEventBinding() });
-		}));*/
-		this.internalListener.push(DataEvent.addListener('update-list-event', function(dataEvent) {
-			self.setState({ listEvent: Thingstore.getEvent() });
+		this.internalListener.push(DataEvent.addListener('update-list-eventbinding', function() {
+			self.updateEventBinding();
 		}));
 		/*
 		this.internalListener.push(DataEvent.addListener('update-list-thing', function(dataEvent) {
@@ -40,15 +37,39 @@ export default class ContainerEventBinding extends React.Component {
 		});
 	}
 
+	getListenersByEvent(event) {
+			var listEventBinding = EventBindingStore.getEventBinding();
+			var listeners;
+			for (let i = 0; i < listEventBinding.length; i++) {
+				if (listEventBinding[i].event.id === event.id) {
+					listeners = listEventBinding[i].listeners;
+					i = listEventBinding.length;
+				}
+			}
+			return listeners;
+	}
+
+	updateEventBinding() {
+		var self = this;
+		EventBindingStore.loadEventBindingStore(function() {
+				self.setState({ listEvent: Thingstore.getEvent() });
+//			Thingstore.loadEventStore(function() {
+//			});
+		});
+	}
+
 	render() {
+		var self = this;
 		return (
 			<div className="p-4 position-relative">
 				{
 					this.state.listEvent.length > 0 ?
 						this.state.listEvent.map(function(event) {
+							var listeners = self.getListenersByEvent(event);
 							return <ElementEventBinding
 								key={"evl-" + event.id}
-								event={event} />
+								event={event}
+								listeners={listeners} />
 						}) : <EmptyState text="There is no registered event to listen to" />
 				}
 

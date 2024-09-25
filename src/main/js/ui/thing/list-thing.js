@@ -127,7 +127,8 @@ export default class ListThing extends React.Component {
 				<form onSubmit={this.createThing.bind(this)}>
 					<div className="form-floating mb-3">
 						<input type="text" className="form-control" name="name" id="new_thing_name" placeholder="Thing name"
-							onChange={this.formValue.bind(this)} />
+							onChange={this.formValue.bind(this)} 
+							required />
 						<label htmlFor="new_thing_name">New Thing</label>
 					</div>
 

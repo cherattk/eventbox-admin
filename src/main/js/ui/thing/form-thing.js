@@ -1,6 +1,6 @@
 import React from 'react';
 import ListEvent from './list-event';
-import ListListener from './list-listener-endpoint';
+import ListListenerEndpoint from './list-listener-endpoint';
 
 import { DataEvent, UIEvent } from '../../lib/ui-event';
 import ThingStore from '../../datastore/thingstore';
@@ -19,9 +19,7 @@ export default class FormThing extends React.Component {
 	getInitialState() {
 		return {
 			show: false,
-			thing: DataSchema.thingSchema(),
-			events: [],
-			endpoints: []
+			thing: DataSchema.thingSchema()
 		}
 	}
 
@@ -43,19 +41,14 @@ export default class FormThing extends React.Component {
 			self.setState(function() {
 				return {
 					show: uiEvent.message.show,
-					thing: _thing,
-					events: ThingStore.getEvent({ thingId: uiEvent.message.thingId }),
-					endpoints: ThingStore.getListennerEndpoint({ thingId: uiEvent.message.thingId })
+					thing: _thing
 				}
 			});
-		});
 
-		this.DataEventListener.push(DataEvent.addListener('update-list-event', function(uiEvent) {
-			self.updateListEvent();
-		}));
-		this.DataEventListener.push(DataEvent.addListener('update-list-listener', function(uiEvent) {
-			self.updateListEndpoint();
-		}));
+			DataEvent.dispatch('update-list-event', { thingId: uiEvent.message.thingId });
+			DataEvent.dispatch('update-list-listener', { thingId: uiEvent.message.thingId });
+
+		});
 
 	}
 
@@ -65,22 +58,6 @@ export default class FormThing extends React.Component {
 		});
 		this.UIEventListener.forEach(element_id => {
 			UIEvent.removeListener(element_id);
-		});
-	}
-
-	updateListEvent() {
-		this.setState(function() {
-			return {
-				events: ThingStore.getEvent({ thingId: this.state.thing.id })
-			}
-		});
-	}
-
-	updateListEndpoint() {
-		this.setState(function() {
-			return {
-				endpoints: ThingStore.getListennerEndpoint({ thingId: this.state.thing.id })
-			}
 		});
 	}
 
@@ -106,8 +83,11 @@ export default class FormThing extends React.Component {
 		var url = Config.url.data.thing(method, this.state.thing.id);
 		ThingStore.saveData(url, method, this.state.thing, function() {
 			ThingStore.loadThingStore(function() {
+				// DataEvent.dispatch('update-list-thing');
+				// DataEvent.dispatch('update-list-eventbinding');
 				DataEvent.dispatch('update-list-thing');
 				UIEvent.dispatch('alert-msg', { status: "success", text: "Thing has been successfully updated" });
+				self.state.thing = DataSchema.thingSchema();
 			});
 		});
 	}
@@ -127,8 +107,9 @@ export default class FormThing extends React.Component {
 			var url = Config.url.data.thing(method, this.state.thing.id);
 			var self = this;
 			ThingStore.saveData(url, method, this.state.thing.id, function() {
-				ThingStore.loadThingStore(function() {
+				ThingStore.loadAllDataStore(function() {
 					DataEvent.dispatch('update-list-thing');
+					DataEvent.dispatch('update-list-eventbinding');
 					UIEvent.dispatch('alert-msg', { status: "success", text: "Thing has been successfully deleted" });
 					self.close();
 				});
@@ -146,11 +127,6 @@ export default class FormThing extends React.Component {
 					<i className="bi bi-arrow-left-short fs-3"></i>
 					<span>Back to Thing List</span>
 				</button>
-				<div className='d-flex align-items-center mb-3 py-3 bg-light'>
-					<h5 className="h5 m-0 px-4 text-primary">
-						{this.state.thing.name ? this.state.thing.name : "New Thing"}
-					</h5>
-				</div>
 
 				<nav>
 					<div className="nav nav-tabs" role="tablist">
@@ -175,7 +151,8 @@ export default class FormThing extends React.Component {
 							<div className='form-group'>
 								<label className="form-label text-primary">Name</label>
 								<input type="text" className="form-control mb-3" name="name" value={this.state.thing.name}
-									onChange={this.formValue.bind(this)} />
+									onChange={this.formValue.bind(this)} 
+									required/>
 							</div>
 							<div className='d-flex mb-3 py-3 align-items-center'>
 								<label className="pe-3 text-primary">Category : </label>
@@ -188,7 +165,7 @@ export default class FormThing extends React.Component {
 								</div>
 								<div className="check-btn">
 									<input className="d-none" type="radio" value="DEVICE" name="category" id="thing_category_device"
-										onChange={this.formValue.bind(this)} checked={this.state.thing.category == 'DEVICE'}/>
+										onChange={this.formValue.bind(this)} checked={this.state.thing.category == 'DEVICE'} />
 									<label className="py-1 px-3 rounded-pill" htmlFor="thing_category_device">
 										Device
 									</label>
@@ -214,22 +191,21 @@ export default class FormThing extends React.Component {
 
 					<div className="tab-pane fade py-3" id='thing-event' role="tabpanel">
 						<p className='bg-light p-3'>
-							The events that are published by the present thing
+							The events that are published by the present thing.
 						</p>
 						{
-							<ListEvent thingId={this.state.thing.id} events={this.state.events} />
+							<ListEvent thingId={this.state.thing.id} />
 							// <ListEvent/>
 						}
 
 					</div>
 					<div className="tab-pane fade py-3" id='thing-listener-endpoint' role="tabpanel">
 						<p className='bg-light p-3'>
-							The listening endpoints through which the present thing receives events
-							that it's listening for.
+							The endpoints where the present thing receives events.
 						</p>
 
 						{
-							<ListListener thingId={this.state.thing.id} endpoints={this.state.endpoints} />
+							<ListListenerEndpoint thingId={this.state.thing.id} />
 						}
 
 					</div>

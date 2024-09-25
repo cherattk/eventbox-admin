@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.cherattk.eventbox.admin.model.Cloudevent;
-import dev.cherattk.eventbox.admin.model.EventBinding;
 import dev.cherattk.eventbox.admin.model.EventBindingMapping;
 import dev.cherattk.eventbox.admin.model.Listener;
 import dev.cherattk.eventbox.admin.model.Thing;
@@ -61,6 +60,18 @@ public class APIController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body("error 2");
+		}
+	}
+	
+	@DeleteMapping("/eventbinding/{event_id}/{listener_id}")
+	public ResponseEntity<String> removeEventBindingListener(
+			@PathVariable("event_id") int eventId,
+			@PathVariable("listener_id") int listenerId)
+	{
+		if (eventBindingService.deleteEventBinding(eventId , listenerId)) {
+			return ResponseEntity.ok().body(Response.success());
+		} else {
+			return ResponseEntity.badRequest().body("error");
 		}
 	}
 
@@ -108,7 +119,7 @@ public class APIController {
 	////////////////////////////////////////////////////////
 	@GetMapping("/cloudevents")
 	public List<Cloudevent> getAllCloudevents() {
-		return (List<Cloudevent>) this.thingService.getAllCloudevents();
+		return this.thingService.getAllCloudevents();
 	}
 
 	@PostMapping("/cloudevents")
@@ -117,7 +128,10 @@ public class APIController {
 	}
 
 	@PutMapping("/cloudevents/{event_id}")
-	public ResponseEntity<String> updateCloudevent(@PathVariable("event_id") int eventId, @RequestBody Cloudevent freshEvent) {
+	public ResponseEntity<String> updateCloudevent(
+			@PathVariable("event_id") int eventId,
+			@RequestBody Cloudevent freshEvent
+	) {
 		if (eventId == freshEvent.getId()) {
 			if (thingService.updateCloudevent(freshEvent)) {
 				return ResponseEntity.ok().body(Response.success());
@@ -151,7 +165,10 @@ public class APIController {
 	}
 
 	@PutMapping("/listeners/{listener_id}")
-	public ResponseEntity<String> updateListener(@PathVariable("listener_id") int listenerId, @RequestBody Listener freshListener) {
+	public ResponseEntity<String> updateListener(
+			@PathVariable("listener_id") int listenerId, 
+			@RequestBody Listener freshListener) {
+		
 		if (listenerId == freshListener.getId()) {
 			if (thingService.updateListener(freshListener)) {
 				return ResponseEntity.ok().body(Response.success());

@@ -6,7 +6,7 @@
 
 const DataEvent = require('../lib/ui-event').DataEvent;
 const Config = require('../config').default;
-const _dataStore = require('./store');
+const _dataStore = require('./store').default;
 
 const EventBindingStore = new _dataStore("eventbinding");
 

@@ -3,7 +3,8 @@ module.exports = {
     return {
       id: "",
       name: "",
-      description: ""
+      description: "",
+			category : ""
     };
   },
   eventSchema: function () {
@@ -13,7 +14,7 @@ module.exports = {
        */
       id: "",
       name: "",
-      thingId: "",
+      thing: this.thingSchema(),
       description: "",
       /**
        * CloudEvent attributes
@@ -24,17 +25,19 @@ module.exports = {
       specversion: "1.0",
       type: "",
       source: "",
+			
       /** 
        * Optional CloudEvent attributes
        * */
-      datacontenttype: ""
+      datacontenttype: "",
+			dataschema : ""
     }
   },
 
   listenerEndpointSchema: function () {
     return {
       id: "",
-      thingId: "",
+      thing: this.thingSchema(),
       url: "",
       active: true,
       description: ""
