@@ -2,6 +2,17 @@
 textarea{
   min-height:200px;
 }
+/*********************/
+.code-panel{
+  background-color:#222;
+  padding:1rem;
+  color:#fff;
+  font-size: large;
+}
+.code-panel span{
+  color:#ff0202;
+  font-weight:bold;
+}
 
 /***************************/
 .check-btn label{

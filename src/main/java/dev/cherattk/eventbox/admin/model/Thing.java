@@ -28,6 +28,14 @@ public class Thing {
 
 	protected String description = "Thing Description";
 	
+	public static enum ThingCategory {
+		WEB_SERVICE,
+		DEVICE;
+    }	
+	//@Column(columnDefinition = "varchar(255) default 'Web Service'")
+	@Enumerated(EnumType.STRING)
+	protected ThingCategory category = ThingCategory.WEB_SERVICE;
+	
 	//@OneToMany(mappedBy = "thing" , cascade = CascadeType.REMOVE)
 	@OneToMany(mappedBy = "thing")
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -37,15 +45,6 @@ public class Thing {
 	@OneToMany(mappedBy = "thing")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Listener> listeners;
-	
-	public static enum ThingCategory {
-		WEB_SERVICE,
-		DEVICE;
-    }
-	
-	//@Column(columnDefinition = "varchar(255) default 'Web Service'")
-	@Enumerated(EnumType.STRING)
-	protected ThingCategory category = ThingCategory.WEB_SERVICE;
 
 	public Thing() {}
 	

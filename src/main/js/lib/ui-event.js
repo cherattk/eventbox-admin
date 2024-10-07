@@ -5,7 +5,7 @@ const UIEvent = EventSet.Topic('ui-event');
 // UIEvent.addEvent('show-event');
 UIEvent.addEvent('get-thing-form');
 UIEvent.addEvent('show-thing-list');
-
+UIEvent.addEvent('show-client-code');
 UIEvent.addEvent('show-event-form');
 UIEvent.addEvent('get-listener-form');
 UIEvent.addEvent('show-eventbinding-form');

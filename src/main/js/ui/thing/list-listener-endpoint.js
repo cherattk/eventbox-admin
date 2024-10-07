@@ -51,7 +51,7 @@ export default class ListListenerEndpoint extends React.Component {
 	deleteListener(e) {
 		let listener = ThingStore.getListenerByArrayCriteria(['id', parseInt(e.target.value)]);
 		// todo : use some modal component
-		var msg = `You are going to delete the listener :\n ${listener[0].url} \n Are you sure ?`;
+		var msg = `You are going to delete the subscribing endpoint :\n ${listener[0].url} \n Are you sure ?`;
 		let ok = confirm(msg);
 		var self = this;
 		if (ok) {
@@ -62,7 +62,7 @@ export default class ListListenerEndpoint extends React.Component {
 					self.updateListListener(self.props.thingId);
 					DataEvent.dispatch('update-list-listener');
 					DataEvent.dispatch('update-list-eventbinding');
-					UIEvent.dispatch('alert-msg', { status: "success", text: "listener endpoint has been successfully deleted" });
+					UIEvent.dispatch('alert-msg', { status: "success", text: "listening endpoint has been successfully deleted" });
 				});
 			});
 		}
@@ -110,7 +110,7 @@ export default class ListListenerEndpoint extends React.Component {
 				</button>
 				{
 					this.state.endpoints.length ? this.renderListenerEndpoint() :
-						<EmptyState text="There is no listening endpoint" />
+						<EmptyState text="There is no subscribing endpoint" />
 				}
 			</React.Fragment>
 		);

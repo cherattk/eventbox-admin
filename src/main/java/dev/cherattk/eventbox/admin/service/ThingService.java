@@ -2,6 +2,7 @@ package dev.cherattk.eventbox.admin.service;
 
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Service;
@@ -93,7 +94,7 @@ public class ThingService {
 		return (List<Listener>) repoListener.findAll();
 	}
 
-	public Listener saveListener(Listener _listener) {
+	public Listener saveListener(Listener _listener){
 		return repoListener.save(_listener);
 	}
 

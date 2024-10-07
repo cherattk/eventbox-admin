@@ -40,7 +40,7 @@ export default class FormListenerEndpoint extends React.Component {
 			// create a new one
 			else if (uiEvent.message.actionForm == "add") {
 				listener = DataSchema.listenerEndpointSchema();
-				listener.thing = ThingStore.getThing({id : uiEvent.message.thingId})[0];
+				listener.thing = ThingStore.getThing({ id: uiEvent.message.thingId })[0];
 			}
 			self.setState(function() {
 				return {
@@ -76,6 +76,15 @@ export default class FormListenerEndpoint extends React.Component {
 		else if (this.state.actionForm == "add") {
 			method = "post".toLocaleLowerCase();
 		}
+		
+		if(method == "post"){
+			let listener = ThingStore.getListenerByArrayCriteria(['url', this.state.listener.url]);
+			if(listener.length > 0){
+				alert("can not add more that one endpoint with the same endpoint");
+				return;
+			}
+		}
+		
 		var url = Config.url.data.listener_endpoint(method, this.state.listener.id);
 		ThingStore.saveData(url, method, this.state.listener, function() {
 			ThingStore.loadListenerEndpointStore(function() {
@@ -88,8 +97,9 @@ export default class FormListenerEndpoint extends React.Component {
 	}
 
 	listenerURLValue(event) {
-		this.state.listener.url = event.target.value;
+		this.state.listener.url = event.target.value.trim();
 		this.setState(this.state);
+
 	}
 
 	render() {
@@ -102,7 +112,7 @@ export default class FormListenerEndpoint extends React.Component {
 					<div className="modal-content">
 						<div className="modal-header">
 							<h5 className="modal-title">
-								Listener Endpoint
+								Listening Endpoint
 							</h5>
 						</div>
 
@@ -112,12 +122,12 @@ export default class FormListenerEndpoint extends React.Component {
 									{/* <label htmlFor="thing-name" className="col-form-label">Listener:</label> */}
 									<input type="text" className="form-control mb-3"
 										value={this.state.listener.url} placeholder="ex: mydomain.com/service/endpoint"
-										onChange={this.listenerURLValue.bind(this)} 
+										onChange={this.listenerURLValue.bind(this)}
 										required />
 								</div>
 							</div>
 
-							<div className="modal-footer justify-content-between">
+							<div className="modal-footer justify-content-start">
 								<button type="submit" className="btn btn-success">Save</button>
 								<button type="reset" className="btn btn-secondary">Cancel</button>
 							</div>

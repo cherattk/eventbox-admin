@@ -117,7 +117,7 @@ export default class ElementEventBinding extends React.Component {
 			// console.log("endpoint : ", endpoint);
 			htmlList.push(
 				<div key={idx + "-" + element.id}
-					className="list-group-item pt-2 align-items-center d-flex justify-content-between">
+					className="align-items-center d-flex justify-content-between py-2 px-3 border-bottom">
 					<div>
 						<p className="m-0 mb-1">
 							<label className='text-primary me-2'>Thing :</label>
@@ -141,16 +141,7 @@ export default class ElementEventBinding extends React.Component {
 			);
 		});
 		//}
-		return (
-			<div className="pb-3">
-				<label className="bg-white border border-bottom-0 fw-bold p-2 px-3 text-primary" style={{ marginBottom: "-1px" }}>
-					Listeners
-				</label>
-				<div className="bg-white list-group list-group-flush border pt-2 px-2">
-					{htmlList}
-				</div>
-			</div>
-		);
+		return htmlList;
 	}
 
 	render() {
@@ -162,22 +153,33 @@ export default class ElementEventBinding extends React.Component {
 		// console.log("Event : " , ThingEvent);
 		// console.log("Thing : " , Thing);
 		return (
-			<div className="bg-light border mb-4 p-3">
+			<div className="border bg-light mb-4 p-3 rounded shadow-sm">
 
 				<SummaryEvent event={this.props.event}/>
 
 
-				{this.props.listeners != null && this.props.listeners.length > 0 ? this.renderListenerEndpoint()
-					: <div className="align-items-center bg-white border d-flex mb-4 p-3 rounded">
-						<i className="bi bi-info-circle-fill me-3 text-primary fs-3"></i> There is no listener attached to this event
+				<div className="pb-3">
+					<label className="bg-white border border-bottom-0 fw-bold p-2 px-3 text-primary" style={{ marginBottom: "-1px" }}>
+						Listeners
+					</label>
+					
+					<div className="bg-white border">					
+						{ this.props.listeners != null && this.props.listeners.length > 0 ? this.renderListenerEndpoint()
+								: <div className="align-items-center d-flex p-3">
+									<i className="bi bi-info-circle-fill me-3 text-primary fs-3"></i> 
+									There is no listener for this event
+									</div>
+						}
 					</div>
-				}
+					
+				</div>
+				
 
 				<div className="d-flex justify-content-between">
 					<button type="button" className="btn btn-primary px-3"
 						value={this.props.event.id}
 						onClick={this.getBindListenerForm.bind(this)}>
-						Bind listener
+						Register Listener
 						<i className="bi bi-plus-circle ms-2"></i>
 						{/*<i className="bi bi-diagram-3-fill ms-2"></i>*/}
 					</button>

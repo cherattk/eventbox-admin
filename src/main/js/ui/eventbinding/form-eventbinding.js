@@ -40,8 +40,8 @@ export default class FormEventBinding extends React.Component {
 			// GET "FREE"" Listeners Endpoint
 			/////////////////////////////////////////////////
 			var bindedListener = self.getBindedListenerToEvent(_event.id);
-			var freeListener = self.getFreeListener(bindedListener);
-			
+			var freeListener = self.getFreeListener(bindedListener , _event.thing.id);
+
 			self.setState(function() {
 				return {
 					event: _event,
@@ -85,26 +85,35 @@ export default class FormEventBinding extends React.Component {
 
 		ThingStore.saveData(url, method, data, function(ajaxResponse) {
 			EventBindingStore.loadEventBindingStore(function() {
-				DataEvent.dispatch('update-list-eventbinding', { eventId : data.eventId });
+				DataEvent.dispatch('update-list-eventbinding', { eventId: data.eventId });
 				UIEvent.dispatch('alert-msg', { status: "success", text: "have been successfully saved" });
 				self.close();
 			});
 		});
 	}
 
-	getFreeListener(bindedListeners) {
+	getFreeListener(bindedListeners , eventThingId) {
+		
 		var allListener = ThingStore.getListennerEndpoint();
 
+		var freeListener;
+		
 		if (bindedListeners.length > 0) {
-			let freeListener = allListener.filter((_listener) => {
-				return bindedListeners.indexOf(_listener.id) === -1;
+			freeListener = allListener.filter((_listener) => {
+				return (bindedListeners.indexOf(_listener.id) === -1);
 			});
-			return freeListener;
-		}
+		}		
 		else {
-			return allListener;
+			freeListener = allListener;
 		}
 
+		// prevent a loop , 
+		// an event can not listen to its own events;
+		var result = freeListener.filter((_listener) => {
+			return _listener.thing.id !== eventThingId;
+		});
+
+		return result;
 	}
 
 	getBindedListenerToEvent(eventId) {
@@ -168,7 +177,7 @@ export default class FormEventBinding extends React.Component {
 		return (
 			<div className="pb-3">
 				<label className="bg-white border border-bottom-0 fw-bold p-2 px-3 text-primary" style={{ marginBottom: "-1px" }}>
-					Listeners
+					Listener(s)
 				</label>
 				<div className="checklist bg-white list-group list-group-flush border pt-2 px-2">
 					{htmlList}
@@ -181,15 +190,14 @@ export default class FormEventBinding extends React.Component {
 		return (
 			<div className="modal fade app-modal-form" id="formListener"
 				tabIndex="-1" role="dialog"
-				aria-labelledby="formListenerLabel"
 				aria-hidden="true"
 				ref={node => (this.modal = node)}>
 
 				<div className="modal-dialog modal-xl" role="document">
 					<div className="modal-content">
-						<div className="modal-header px-4">
-							<h5 className="modal-title" id="formListenerLabel">
-								Event Binding
+						<div className="modal-header bg-light px-4 text-primary">
+							<h5 className="modal-title " id="formListenerLabel">
+								Register Listeners
 							</h5>
 							<button type="button" className="btn-close" onClick={this.close.bind(this)} aria-label="Close">
 							</button>
@@ -200,7 +208,7 @@ export default class FormEventBinding extends React.Component {
 								this.state.freeListener.length > 0 ? this.renderListenerEndpoint() : null
 							}
 						</div>
-						<div className="modal-footer justify-content-between">
+						<div className="modal-footer justify-content-start">
 							<button type="button" className="btn btn-success"
 								onClick={this.saveListener.bind(this)}>Save</button>
 							<button type="button" className="btn btn-secondary"

@@ -136,7 +136,7 @@ export default class FormThing extends React.Component {
 						</a>
 						<a className="nav-item nav-link me-3 border-start border-top border-end"
 							data-bs-toggle="tab" href='#thing-event' role="tab">
-							Events
+							Event
 						</a>
 						<a className="nav-item nav-link me-3 border-start border-top border-end"
 							data-bs-toggle="tab" href='#thing-listener-endpoint' role="tab">
@@ -201,7 +201,7 @@ export default class FormThing extends React.Component {
 					</div>
 					<div className="tab-pane fade py-3" id='thing-listener-endpoint' role="tabpanel">
 						<p className='bg-light p-3'>
-							The endpoints where the present thing receives events.
+							The endpoints from which the present thing receives events.
 						</p>
 
 						{

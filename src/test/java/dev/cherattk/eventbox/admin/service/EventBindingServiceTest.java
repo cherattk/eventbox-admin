@@ -2,6 +2,7 @@ package dev.cherattk.eventbox.admin.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ class EventBindingServiceTest {
 		EventBinding bindingOne = new EventBinding();
 		Cloudevent eventOne = new Cloudevent(1, "1.0" , "source-1" , "event-1");
 		bindingOne.setEvent(eventOne);
-		Listener listenerOne = new Listener(1 , "listener-1" , "listener-1");
+		Listener listenerOne = new Listener(1 , "listener-1" , "http://localhost:3001");
 		listenerOne.setThing( new Thing(1));
 		bindingOne.setListener(listenerOne);
 		mockFindAllresult.add(bindingOne);
@@ -58,7 +59,7 @@ class EventBindingServiceTest {
 		EventBinding bindingTwo = new EventBinding();
 		Cloudevent eventTwo = new Cloudevent(2, "1.0" , "source-2" , "event-2");
 		bindingTwo.setEvent(eventTwo);
-		Listener listenerTwo = new Listener(2 , "listener-2" , "listener-2");
+		Listener listenerTwo = new Listener(2 , "listener-2" , "http://localhost:3002");
 		listenerTwo.setThing( new Thing(1));
 		bindingTwo.setListener(listenerTwo);
 		mockFindAllresult.add(bindingTwo);
@@ -66,7 +67,7 @@ class EventBindingServiceTest {
 		// binding #3
 		EventBinding bindingThree = new EventBinding();
 		bindingThree.setEvent(eventTwo);
-		Listener listenerThree = new Listener(3 , "listener-3" , "listener-3");
+		Listener listenerThree = new Listener(3 , "listener-3" , "http://localhost:3003");
 		listenerThree.setThing( new Thing(1));
 		bindingThree.setListener(listenerThree);
 		mockFindAllresult.add(bindingThree);

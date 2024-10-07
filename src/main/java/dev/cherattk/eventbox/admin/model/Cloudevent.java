@@ -52,7 +52,7 @@ public class Cloudevent{
 	@Column(nullable = false)
 	protected String datacontenttype = MediaType.APPLICATION_JSON_VALUE;
 	
-	@Column(nullable = true)
+	@Column(nullable = false)
 	protected String dataschema;
 	
 	public Cloudevent() {}

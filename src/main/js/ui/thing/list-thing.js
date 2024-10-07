@@ -125,13 +125,14 @@ export default class ListThing extends React.Component {
 		return (
 			<div className={this.state.show ? "" : "d-none"}>
 				<form onSubmit={this.createThing.bind(this)}>
-					<div className="form-floating mb-3">
-						<input type="text" className="form-control" name="name" id="new_thing_name" placeholder="Thing name"
-							onChange={this.formValue.bind(this)} 
-							required />
-						<label htmlFor="new_thing_name">New Thing</label>
-					</div>
-
+				<div className="px-1 mb-3">
+				  {/* <span class="input-group-text border-primary text-bg-primary">Thing Name</span> */}
+					<label htmlFor="new_thing_name" className="form-label text-primary fw-bold">New thing</label>
+				  <input type="text" className="form-control" placeholder="thing name"
+						name="name" 
+						id="new_thing_name"
+						onChange={this.formValue.bind(this)}/>
+				</div>
 					<button type="submit" className="btn btn-success mb-2">
 						Save
 						<i className="bi bi-plus-circle ms-2"></i>

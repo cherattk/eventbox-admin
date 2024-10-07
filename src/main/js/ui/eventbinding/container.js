@@ -5,6 +5,7 @@ import FormEventBinding from './form-eventbinding';
 import EventBindingStore from '../../datastore/eventbindingstore'
 import { EmptyState } from '../component/message';
 import Thingstore from '../../datastore/thingstore';
+import ModalClientCode from './modal-client-code';
 
 export default class ContainerEventBinding extends React.Component {
 
@@ -74,6 +75,9 @@ export default class ContainerEventBinding extends React.Component {
 				}
 
 				<FormEventBinding />
+				
+				<ModalClientCode/>
+				
 			</div>
 		)
 	}

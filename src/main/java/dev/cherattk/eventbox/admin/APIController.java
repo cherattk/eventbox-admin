@@ -3,6 +3,8 @@ package dev.cherattk.eventbox.admin;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -90,7 +92,12 @@ public class APIController {
 
 	@PostMapping("/things")
 	public Thing addThing(@RequestBody Thing thing) {
-		return thingService.saveThing(thing);
+		try {
+			return thingService.saveThing(thing);		
+		} catch (Exception e) {
+			System.err.println(e);
+			return new Thing();
+		}
 	}
 
 	@PutMapping("/things/{thing_id}")
@@ -124,7 +131,14 @@ public class APIController {
 
 	@PostMapping("/cloudevents")
 	public Cloudevent addCloudevent(@Validated(Cloudevent.class) @RequestBody Cloudevent newCloudevent) {
-		return thingService.saveCloudevent(newCloudevent);
+		
+		try {
+			return thingService.saveCloudevent(newCloudevent);
+		} catch (Exception e) {
+			System.err.println(e);
+			return new Cloudevent();
+		}
+		
 	}
 
 	@PutMapping("/cloudevents/{event_id}")
@@ -160,8 +174,14 @@ public class APIController {
 	}
 
 	@PostMapping("/listeners")
-	public Listener addListener(@RequestBody Listener newListener) {
-		return thingService.saveListener(newListener);
+	public Listener addListener(@RequestBody Listener newListener) {	
+		try {
+			return thingService.saveListener(newListener);
+		}
+		catch (Exception e) {
+			System.err.println(e);
+			return new Listener();
+		}
 	}
 
 	@PutMapping("/listeners/{listener_id}")

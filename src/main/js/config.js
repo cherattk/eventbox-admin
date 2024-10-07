@@ -6,7 +6,7 @@ const login_url = `${hostAPI}/login`;
 const log_out_url = `${hostAPI}/logout`;
 const auth_token_url = `${hostAPI}/auth_token`;
 ///////////////////////////////////////////////////
-// const thing_url = `${hostAPI}/things`;
+// const thing_url = `${hostAPI}/things`; 
 // const event_url = `${hostAPI}/cloudevents`;
 // const listener_url = `${hostAPI}/listener_endpoints`;
 ///////////////////////////////////////////////////

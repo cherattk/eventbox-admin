@@ -61,6 +61,7 @@ export default class FormEvent extends React.Component {
 
   saveEvent(e) {
     e.preventDefault();
+		
     var self = this;
     var method = "";
     var url = "";
@@ -80,6 +81,7 @@ export default class FormEvent extends React.Component {
         self.close();
       });
     });
+		
   }
 
   formValue(event) {
@@ -87,10 +89,10 @@ export default class FormEvent extends React.Component {
     this.setState(this.state);
   }
 
-  copyEventCode() {
-    var ce_code = JSON.stringify(this.state.event, null, 2);
-    navigator.clipboard.writeText(ce_code);
-  }
+//  copyEventCode() {
+//    var ce_code = JSON.stringify(this.state.event, null, 2);
+//    navigator.clipboard.writeText(ce_code);
+//  }
 
   render() {
     return (
@@ -109,18 +111,11 @@ export default class FormEvent extends React.Component {
               <button type="button" className="btn-close" onClick={this.close.bind(this)} aria-label="Close"></button>
             </div>
             <div className='modal-body'>
-              <nav className="nav nav-tabs pt-3 " role="tablist">
-                <a className="nav-link me-3 border border-bottom-0 active" data-bs-toggle="tab"
-                  href="#event_details" role="tab">Details</a>
-                <a className="nav-link me-3 border border-bottom-0" data-bs-toggle="tab"
-                  href="#event_rawformat" role="tab">JSON Format</a>
-              </nav>
 
-              <div className="tab-content pt-3">
-                <div className="tab-pane show active" id="event_details" role="tabpanel">
+                <div id="event_details" className="p-3">
                   <form onSubmit={this.saveEvent.bind(this)} onReset={this.close.bind(this)}>
 
-                    <div className="p-3">
+                    <div>
                       <div className="mb-3">
                         <label className="form-label text-primary">
                           Thing
@@ -138,13 +133,14 @@ export default class FormEvent extends React.Component {
                         <input id="event_name" type="text" className="form-control"
                           name="name"
                           value={this.state.event.name}
-                          onChange={this.formValue.bind(this)} />
+                          onChange={this.formValue.bind(this)} 
+													required/>
                       </div>
                     </div>
 
                     <div className='card mb-3'>
                       <div className='card-header text-primary'>
-                        Cloudevent Attributes
+                        Cloudevent
                       </div>
                       <div className='card-body'>
                         <div className="mb-3">
@@ -179,7 +175,7 @@ export default class FormEvent extends React.Component {
                             name="datacontenttype"
                             value={this.state.event.datacontenttype}
                             onChange={this.formValue.bind(this)} 
-														require/>
+														required/>
                           <div className="form-text">
                             Example :
                           </div>
@@ -195,26 +191,12 @@ export default class FormEvent extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className='d-flex justify-content-between'>
+                    <div className='d-flex justify-content-start'>
                       <button type="submit" className="btn btn-success me-3">Save</button>
-                      <button type="button" className="btn btn-secondary">Close</button>
+                      <button type="reset" className="btn btn-secondary">Close</button>
                     </div>
-
                   </form>
-
-                </div>
-                <div className="tab-pane" id="event_rawformat" role="tabpanel">
-                  <div className='card-body'>
-                    <pre>
-                      {JSON.stringify(this.state.event, null, 2)}
-                    </pre>
-                  </div>
-                  <div className='card-footer'>
-                    <button className="btn btn-primary"
-                      onClick={this.copyEventCode.bind(this)}>Copy Code</button>
-                  </div>
-                </div>
-              </div>
+              </div>							
             </div>
 
           </div>
