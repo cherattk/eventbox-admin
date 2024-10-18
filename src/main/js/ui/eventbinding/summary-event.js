@@ -1,6 +1,5 @@
 // import React, { useRef, useState } from 'react';
 import React from 'react';
-import ThingStore from '../../datastore/thingstore';
 import { UIEvent } from '../../lib/ui-event';
 
 export function SummaryEvent(props) {
@@ -32,8 +31,12 @@ export function SummaryEvent(props) {
 			</p>
 			
 			<div className="align-items-center d-flex py-2">
-				<button className="btn btn-sm btn-primary" 
-							onClick={getClientCode}>Show Cloudevent Attributes</button>
+				{
+					props.showAttributes ?  (<button className="btn btn-sm btn-primary" 
+																	onClick={getClientCode}>Show Cloudevent Attributes</button>) 
+															 : null
+					
+				}
 			</div>
 			
 		</div>

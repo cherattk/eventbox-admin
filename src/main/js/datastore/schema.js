@@ -38,7 +38,8 @@ module.exports = {
     return {
       id: "",
       thing: this.thingSchema(),
-      url: "",
+      endpoint: "",
+			protocol : "https",
       active: true,
       description: ""
     }

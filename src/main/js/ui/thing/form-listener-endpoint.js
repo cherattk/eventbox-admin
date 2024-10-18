@@ -62,7 +62,7 @@ export default class FormListenerEndpoint extends React.Component {
 		});
 	}
 
-	isValidURL(inputName) {
+	isValidEndpoint(inputName) {
 		return !!inputName;
 	}
 
@@ -76,15 +76,15 @@ export default class FormListenerEndpoint extends React.Component {
 		else if (this.state.actionForm == "add") {
 			method = "post".toLocaleLowerCase();
 		}
-		
-		if(method == "post"){
-			let listener = ThingStore.getListenerByArrayCriteria(['url', this.state.listener.url]);
-			if(listener.length > 0){
+
+		if (method == "post") {
+			let listener = ThingStore.getListenerByArrayCriteria(['endpoint', this.state.listener.endpoint]);
+			if (listener.length > 0) {
 				alert("can not add more that one endpoint with the same endpoint");
 				return;
 			}
 		}
-		
+
 		var url = Config.url.data.listener_endpoint(method, this.state.listener.id);
 		ThingStore.saveData(url, method, this.state.listener, function() {
 			ThingStore.loadListenerEndpointStore(function() {
@@ -96,8 +96,8 @@ export default class FormListenerEndpoint extends React.Component {
 		});
 	}
 
-	listenerURLValue(event) {
-		this.state.listener.url = event.target.value.trim();
+	listenerEndpointValue(event) {
+		this.state.listener.endpoint = event.target.value.trim();
 		this.setState(this.state);
 
 	}
@@ -118,13 +118,27 @@ export default class FormListenerEndpoint extends React.Component {
 
 						<form onSubmit={this.saveForm.bind(this)} onReset={this.close.bind(this)}>
 							<div className="modal-body">
-								<div className="form-group">
-									{/* <label htmlFor="thing-name" className="col-form-label">Listener:</label> */}
-									<input type="text" className="form-control mb-3"
-										value={this.state.listener.url} placeholder="ex: mydomain.com/service/endpoint"
-										onChange={this.listenerURLValue.bind(this)}
+								<div className="input-group mb-3">
+									<span class="border-primary input-group-text text-bg-primary text-uppercase">
+										https://
+									</span>
+									<input type="text" className="form-control"
+										value={this.state.listener.endpoint}
+										onChange={this.listenerEndpointValue.bind(this)}
 										required />
 								</div>
+								<p class="border m-0 p-2 rounded text-bg-light">
+									The http endpoint can be any valid url
+									and the port number is <strong className="fw-bold">required</strong>
+									<br />
+									Examples: 
+									<br />
+									- mydomain.com:3000
+									<br />
+									- mydomain.com:80/service/endpoint
+									<br />
+									- my-subdomaine.my-hotsname.com:80/service/endpoint
+								</p>
 							</div>
 
 							<div className="modal-footer justify-content-start">

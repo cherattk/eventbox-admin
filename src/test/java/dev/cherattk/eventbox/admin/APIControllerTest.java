@@ -260,8 +260,8 @@ class APIControllerTest {
 		// assertion
 		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
 		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(reqBody.getId())));
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(reqBody.getName())));
-		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.url", Matchers.is(reqBody.getUrl())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.endpoint", Matchers.is(reqBody.getEndpoint())));
+		resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.protocol", Matchers.is(reqBody.getProtocol())));
 	}
 
 	@Test

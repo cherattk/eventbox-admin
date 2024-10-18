@@ -7,6 +7,6 @@ INSERT INTO "PUBLIC"."CLOUDEVENT" (id , thing_id , source , specversion , type ,
 INSERT INTO "PUBLIC"."CLOUDEVENT" (id , thing_id , source , specversion , type , name, datacontenttype , dataschema , description) VALUES (default, 2, 'com.company.service-2', '1.0', 'event.type.3', 'event-3', 'application/json', '', 'event 3 description');
 INSERT INTO "PUBLIC"."CLOUDEVENT" (id , thing_id , source , specversion , type, name, datacontenttype , dataschema , description) VALUES (default, 3, 'com.company.device-1', '1.0', 'event.type.4', 'event-4','application/json', '', 'event 4 description');
 
-INSERT INTO "PUBLIC"."LISTENER" (id , thing_id , name , url) VALUES (default, 1 , 'listener 1', 'http://localhost:3001/listener-endpoint');
-INSERT INTO "PUBLIC"."LISTENER" (id , thing_id , name , url) VALUES (default, 2 , 'listener 2', 'http://localhost:3002/listener-endpoint');
-INSERT INTO "PUBLIC"."LISTENER" (id , thing_id , name , url) VALUES (default, 3 , 'listener 3', 'http://localhost:3003/listener-endpoint');
+INSERT INTO "PUBLIC"."LISTENER" (id , thing_id , protocol, endpoint) VALUES (default, 1 , 'http', 'localhost:3001/listener-endpoint');
+INSERT INTO "PUBLIC"."LISTENER" (id , thing_id , protocol, endpoint) VALUES (default, 2 , 'http', 'localhost:3002/listener-endpoint');
+INSERT INTO "PUBLIC"."LISTENER" (id , thing_id , protocol, endpoint) VALUES (default, 3 , 'http', 'localhost:3003/listener-endpoint');

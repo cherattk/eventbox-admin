@@ -166,7 +166,7 @@ export default class FormEventBinding extends React.Component {
 								onChange={this.selectListenerEndpoint.bind(this)} />
 							<label className="form-check-label" htmlFor={listener.id}>
 								<span className="checkmark"></span>
-								{listener.url}
+								{listener.protocol}://{listener.endpoint}
 							</label>
 						</div>
 					</div>
@@ -203,7 +203,7 @@ export default class FormEventBinding extends React.Component {
 							</button>
 						</div>
 						<div className="modal-body px-4">
-							<SummaryEvent event={this.state.event} />
+							<SummaryEvent event={this.state.event} showAttributes={false}/>
 							{
 								this.state.freeListener.length > 0 ? this.renderListenerEndpoint() : null
 							}

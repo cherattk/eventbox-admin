@@ -70,13 +70,16 @@ export default class ElementEventBinding extends React.Component {
 		});
 	}
 
-	deleteListener(event_id, listener_id) {
+	deleteListener(event_id, listener) {
 		// todo : use modal component
 		var self = this;
-		let ok = window.confirm(`You are going to delete the listener : .... \n Are you sure ?`);
+		let warningMsg  = "You are going to unbind the listener endpoint: \n";
+				warningMsg += `${listener.protocol}://${listener.endpoint} \n Are you sure ?`;
+				
+		let ok = window.confirm(warningMsg);
 		if (ok) {
 			var method = "delete".toLocaleLowerCase();
-			var url = Config.url.data.eventbinding(method, event_id, listener_id);
+			var url = Config.url.data.eventbinding(method, event_id, listener.id);
 			ThingStore.sendAjaxRequest(url, method, "", function(ajaxResponse) {
 				UIEvent.dispatch('alert-msg', { status: "success", text: "have been successfully deleted" });
 				DataEvent.dispatch('update-list-eventbinding');
@@ -126,14 +129,14 @@ export default class ElementEventBinding extends React.Component {
 						<p className="m-0 mb-1">
 							<label className='text-primary me-2'> Endpoint :</label>
 							<label>
-								{element.url}
+								{element.protocol}://{element.endpoint}
 							</label>
 						</p>
 					</div>
 					<div>
 						<button type="button" className="btn btn-danger btn-sm"
-							onClick={this.deleteListener.bind(this, self.props.event.id, element.id)}>
-							Delete
+							onClick={this.deleteListener.bind(this, self.props.event.id, element)}>
+							Unbind
 							<i className="bi bi-trash3-fill ms-2"></i>
 						</button>
 					</div>
@@ -155,7 +158,7 @@ export default class ElementEventBinding extends React.Component {
 		return (
 			<div className="border bg-light mb-4 p-3 rounded shadow-sm">
 
-				<SummaryEvent event={this.props.event}/>
+				<SummaryEvent event={this.props.event} showAttributes={true}/>
 
 
 				<div className="pb-3">
@@ -179,7 +182,7 @@ export default class ElementEventBinding extends React.Component {
 					<button type="button" className="btn btn-primary px-3"
 						value={this.props.event.id}
 						onClick={this.getBindListenerForm.bind(this)}>
-						Register Listener
+						Bind Listener
 						<i className="bi bi-plus-circle ms-2"></i>
 						{/*<i className="bi bi-diagram-3-fill ms-2"></i>*/}
 					</button>

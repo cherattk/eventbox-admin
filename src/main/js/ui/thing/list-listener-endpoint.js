@@ -42,9 +42,9 @@ export default class ListListenerEndpoint extends React.Component {
 
 	getListenerForm(e) {
 		UIEvent.dispatch('get-listener-form', {
-			actionForm : e.currentTarget.dataset.action,
-			thingId : this.props.thingId,
-			listener_id : parseInt(e.currentTarget.value)
+			actionForm: e.currentTarget.dataset.action,
+			thingId: this.props.thingId,
+			listener_id: parseInt(e.currentTarget.value)
 		});
 	}
 
@@ -57,7 +57,7 @@ export default class ListListenerEndpoint extends React.Component {
 		if (ok) {
 			var method = "delete".toLocaleLowerCase();
 			var url = Config.url.data.listener_endpoint(method, listener[0].id);
-			ThingStore.saveData(url, method, null , function() {
+			ThingStore.saveData(url, method, null, function() {
 				ThingStore.loadListenerEndpointStore(function() {
 					self.updateListListener(self.props.thingId);
 					DataEvent.dispatch('update-list-listener');
@@ -76,7 +76,9 @@ export default class ListListenerEndpoint extends React.Component {
 			let optionID = "listener-item-" + idx;
 			list.push(
 				<li key={optionID} className="list-group-item d-flex justify-content-between">
-					<div>{listener.url}</div>
+					<div>
+						{listener.protocol}://{listener.endpoint}
+					</div>
 					<div>
 						<button className="btn btn-primary btn-sm me-3"
 							value={listener.id}

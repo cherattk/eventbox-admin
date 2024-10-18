@@ -1,3 +1,9 @@
+- Add SSL Support
+
+- Security issue : Validate request fields with Backend Validator
+
+- Prevent thing from listening to its own events
+
 - Sign(in/out)
 
 - Cloudvent.Type AND Coudevent.Source fields MUST NOT contain a comma "," character. 

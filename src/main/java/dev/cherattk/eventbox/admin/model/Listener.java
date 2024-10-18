@@ -14,8 +14,8 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = { 
-		@UniqueConstraint(name="unique_Url" , 
-				columnNames = { "url"}) 
+		@UniqueConstraint(name="unique_endpoint" , 
+				columnNames = { "endpoint"}) 
 })
 public class Listener {
 
@@ -27,21 +27,16 @@ public class Listener {
 	@JoinColumn( name = "thing_id")
 	protected Thing thing;
 	
-	@Column( name= "name")
-	protected String name;
-
-	@Column( name= "url")
-	protected String url;
+	protected String endpoint;
 	
-	public Listener() {}	
+	protected String protocol = "http";
 	
-	public Listener(Integer id, String name, String url) {
+	public Listener() {}
+	
+	public Listener(Integer id, String endpoint) {
 		this.id = id;
-		this.name = name;
-		this.url = url;
+		this.endpoint = endpoint;
 	}
-
-
 
 	/**
 	 * This constructor is used in APIController.bindListener() method
@@ -59,15 +54,6 @@ public class Listener {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
 	public Thing getThing() {
 		return thing;
 	}
@@ -76,17 +62,25 @@ public class Listener {
 		this.thing = thing;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getEndpoint() {
+		return endpoint;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public String getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(url);
+		return Objects.hash(endpoint);
 	}
 
 	@Override
@@ -98,7 +92,7 @@ public class Listener {
 		if (getClass() != obj.getClass())
 			return false;
 		Listener other = (Listener) obj;
-		return Objects.equals(url, other.url);
+		return Objects.equals(endpoint, other.endpoint);
 	}
 	
 	
