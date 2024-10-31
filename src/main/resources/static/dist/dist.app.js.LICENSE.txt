@@ -1,0 +1,69 @@
+/**
+ * @license
+ * Lodash <https://lodash.com/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/**
+ * @license React
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @license React
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * @module EventMapMananger
+ * @copyright Copyright (c) 2019-present cheratt karim
+ * @license MIT Licence
+ */
+
+/**
+ * @module EventSet
+ * @license MIT Licence
+ * @copyright Copyright (c) 2018-present cheratt karim
+ *                                              
+ */
+
+/**
+ * @module Topic
+ * @license MIT Licence
+ * @copyright Copyright (c) 2018-present cheratt karim
+ */
+
+/**
+ * @module Util
+ * @license MIT Licence
+ * @copyright Copyright (c) 2018-present cheratt karim
+ */
+
+/**
+ * @module store
+ * @copyright Copyright (c) 2019-present cheratt karim
+ * @license MIT Licence
+ */
