@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.assertj.core.util.Arrays;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -59,7 +61,10 @@ class APIControllerTest {
 
 		String testedURL = "/api/things";
 
-		List<Thing> listThing = List.of(new Thing(1), new Thing(2), new Thing(3));
+		List<Thing> listThing = new ArrayList<Thing>();
+		listThing.add(new Thing(1));
+		listThing.add(new Thing(2));
+		listThing.add(new Thing(3));
 
 		when(mockThingService.getAllThings()).thenReturn(listThing);
 		
@@ -228,8 +233,11 @@ class APIControllerTest {
 
 		String testedURL = "/api/listeners";
 
-		List<Listener> mockListListener = List.of(new Listener(1), new Listener(2), new Listener(3));
-
+		List<Listener> mockListListener = new ArrayList<Listener>();
+		mockListListener.add(new Listener(1));
+		mockListListener.add(new Listener(2));
+		mockListListener.add(new Listener(3));
+		
 		when(mockThingService.getAllListeners()).thenReturn(mockListListener);
 
 		ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.get(testedURL));

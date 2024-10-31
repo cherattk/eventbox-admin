@@ -1,3 +1,6 @@
+//
+console.log('EVENTBOX-ADMIN-' + "1.0.0");
+
 const host = window.document.location.origin;
 ///////////////////////////////////////////////////
 const hostAPI = host + "/api";

@@ -4,8 +4,8 @@ const fs = require("fs");
 module.exports = (env, argv) => ({
 	entry: './src/main/js/app.js',
 	output: {
-		//path: __dirname,
-		path: path.join(__dirname , 'target/classes/static'),
+		path: argv.mode === 'production' ? path.join(__dirname , './src/main/resources/static') : 
+					/* mode development */ path.join(__dirname , 'target/classes/static'),
 		filename: 'dist/dist.app.js',
 	},
 	devtool: argv.mode === 'production' ? false : 'source-map',

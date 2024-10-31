@@ -119,7 +119,7 @@ export default class FormListenerEndpoint extends React.Component {
 						<form onSubmit={this.saveForm.bind(this)} onReset={this.close.bind(this)}>
 							<div className="modal-body">
 								<div className="input-group mb-3">
-									<span class="border-primary input-group-text text-bg-primary text-uppercase">
+									<span className="border-primary input-group-text text-bg-primary text-uppercase">
 										https://
 									</span>
 									<input type="text" className="form-control"
@@ -127,7 +127,7 @@ export default class FormListenerEndpoint extends React.Component {
 										onChange={this.listenerEndpointValue.bind(this)}
 										required />
 								</div>
-								<p class="border m-0 p-2 rounded text-bg-light">
+								<p className="border m-0 p-2 rounded text-bg-light">
 									The http endpoint can be any valid url
 									and the port number is <strong className="fw-bold">required</strong>
 									<br />
