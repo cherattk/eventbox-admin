@@ -12,12 +12,12 @@ docker build -t eventbox/admin:1.0.0 .
 
 #### build container
 ```bash
-docker container create --name eventbox-admin-1.0.0 -p 8080:80 eventbox/admin:1.0.0
+docker container create --name eventbox-admin-1.0.0 --publish 8080:80 eventbox/admin:1.0.0
 ```
 
-$$\color{red}Important$$ : The container will be reachable at http://localhost:8080 - Set this value to [Eventbox/Broker Environment Variable](https://github.com/cherattk/eventbox-broker?tab=readme-ov-file#set-required-environment-variable) so that it can load Event/Listener Mapping from the eventbox/admin server
+$$\color{red}Important$$ : The service whithin the container will be reachable at **http://host.docker.internal:8080** - Set this value to [Eventbox/Broker Environment Variable](https://github.com/cherattk/eventbox-broker?tab=readme-ov-file#set-required-environment-variable) so that the broker can load Event/Listener Mapping.
 
 #### run container
 ```bash
-docker start eventbox-admin-1.0.0
+docker start -a eventbox-admin-1.0.0
 ```
